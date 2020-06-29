@@ -1,0 +1,22 @@
+{
+  "name": "tracking-app-rest-api",
+  "version": "1.0.0",
+  "description": "This is the REST Api that will act as the backend for the application",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.lrz.de:software-lab-2020/tracking-app-rest-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.6",
+    "typescript": "^3.9.5"
+  }
+}
