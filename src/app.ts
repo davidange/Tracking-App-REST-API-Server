@@ -2,6 +2,10 @@ import Express from "express";
 const app = Express();
 import mongoose = require("mongoose");
 import dotenv = require("dotenv");
+import expressValidator from "express-validator";
+//import Routes
+import authRouter from "./routes/auth";
+
 
 //load Environment Constants saved in .env
 dotenv.config();
@@ -13,11 +17,14 @@ mongoose.connect(
 	() => console.log("connected to DB!")
 );
 
-//import Routes
-import authRouter from "./routes/auth";
+//Middlewares
+//to parse incoming requests
+app.use(Express.json());
+
 
 //routes Middlewares
 app.use("/api/user/", authRouter);
+
 
 //start application
 app.listen(3000, () => {
