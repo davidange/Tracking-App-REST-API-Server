@@ -1,7 +1,7 @@
 import Express from "express";
 const app = Express();
-import mongoose = require("mongoose");
-import dotenv = require("dotenv");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 
 
 const port = process.env.PORT || 3000;
@@ -15,7 +15,7 @@ dotenv.config();
 
 //connect to DB
 mongoose.connect(
-	process.env.DB_CONNECT!,
+	process.env.DB_CONNECT,
 	{ useUnifiedTopology: true, useNewUrlParser: true },
 	() => console.log("connected to DB!")
 );

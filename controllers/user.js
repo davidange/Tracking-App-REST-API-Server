@@ -1,10 +1,9 @@
-import { Request, Response } from "express";
 import User from "../models/user";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-export const registerUser = async (req: Request, res: Response) => {
-	const body = req.body as { name: string; email: string; password: string };
+export const registerUser = async (req, res) => {
+	const body = req.body ;
 
 	const name = body.name;
 	const email = body.email;
@@ -38,8 +37,8 @@ export const registerUser = async (req: Request, res: Response) => {
 	}
 };
 
-export const loginUser = async (req: Request, res: Response) => {
-	const body = req.body as { email: string; password: string };
+export const loginUser = async (req, res) => {
+	const body = req.body;
 
 	const email = body.email;
 	const password = body.password;
@@ -52,7 +51,7 @@ export const loginUser = async (req: Request, res: Response) => {
 		const validPass = await bcrypt.compare(password, user.password);
 		if (validPass) {
 			//loggin succesfull
-			const token = jwt.sign({ _id: user._id },process.env.TOKEN_SECRET!);
+			const token = jwt.sign({ _id: user._id },process.env.TOKEN_SECRET);
 			return res.status(200).header('auth-token',token).send('Successfully logged in!');
 		
 		}

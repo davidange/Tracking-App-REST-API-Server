@@ -25,7 +25,7 @@ export const registerValidationUser = [
 		.not()
 		.isEmpty()
 		.withMessage("Password cannot be Empty!"),
-	(req: Request, res: Response, next: NextFunction) => {
+	(req, res, next) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty())
 			return res.status(422).json({ errors: errors.array() });
@@ -50,7 +50,7 @@ export const loginValidationUser = [
 		.not()
 		.isEmpty()
 		.withMessage("Password cannot be Empty!"),
-	(req: Request, res: Response, next: NextFunction) => {
+	(req, res, next) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty())
 			return res.status(422).json({ errors: errors.array() });
