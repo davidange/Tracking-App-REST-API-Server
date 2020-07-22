@@ -1,15 +1,12 @@
-import { Router } from "express";
-import {registerUser,loginUser} from '../controllers/user'
-import {registerValidationUser,loginValidationUser} from '../middlewares/validators/user';
+const express = require("express");
+const router = express.Router();
+
+const userController = require("../controllers/user");
+const userValidator = require("../middlewares/validators/user");
 
 
-const router = Router();
+router.post("/register", userValidator.registerValidationUser, userController.registerUser);
 
+router.post("/login", userValidator.loginValidationUser, userController.loginUser);
 
-
-router.post("/register",registerValidationUser,registerUser);
-
-router.post('/login', loginValidationUser,loginUser);
-
-
-export default router;
+module.exports = router;

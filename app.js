@@ -1,14 +1,13 @@
-import Express from "express";
-const app = Express();
+const express = require("express");
+const app = express();
+
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-
 
 const port = process.env.PORT || 3000;
 
 //import Routes
-import authRouter from "./routes/auth";
-
+const authRouter = require("./routes/auth");
 
 //load Environment Constants saved in .env
 dotenv.config();
@@ -22,13 +21,10 @@ mongoose.connect(
 
 //Middlewares
 //to parse incoming requests
-app.use(Express.json());
+app.use(express.json());
 
 //routes Middlewares
 app.use("/api/user/", authRouter);
-
-
-
 
 //start application
 app.listen(port, () => {

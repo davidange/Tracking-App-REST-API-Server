@@ -1,14 +1,13 @@
-import User from "../models/user";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+const User =require( "../models/user");
+const bcrypt=require("bcryptjs");
+const jwt=require( "jsonwebtoken");
 
-export const registerUser = async (req, res) => {
+const registerUser = async (req, res) => {
 	const body = req.body ;
 
 	const name = body.name;
 	const email = body.email;
 	const password = body.password;
-
 	//Check if User is already in DB
 	const emailExists = await User.findOne({ email: email });
 	if (emailExists) {
@@ -37,7 +36,7 @@ export const registerUser = async (req, res) => {
 	}
 };
 
-export const loginUser = async (req, res) => {
+const loginUser = async (req, res) => {
 	const body = req.body;
 
 	const email = body.email;
@@ -58,3 +57,9 @@ export const loginUser = async (req, res) => {
 	}
 	return res.status(400).send("Email or password is wrong");
 };
+
+
+module.exports={
+	registerUser,
+	loginUser
+}

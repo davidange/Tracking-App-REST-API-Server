@@ -1,7 +1,6 @@
-import { check, validationResult } from "express-validator";
-import { Request, Response, NextFunction } from "express";
+const { check, validationResult } = require("express-validator");
 
-export const registerValidationUser = [
+ const registerValidationUser = [
 	check("name")
 		.trim()
 		.not()
@@ -33,9 +32,7 @@ export const registerValidationUser = [
 	},
 ];
 
-
-
-export const loginValidationUser = [
+ const loginValidationUser = [
 	check("email")
 		.trim()
 		.not()
@@ -57,3 +54,9 @@ export const loginValidationUser = [
 		next();
 	},
 ];
+
+
+module.exports = {
+	registerValidationUser,
+	loginValidationUser
+}

@@ -4,8 +4,8 @@
   "description": "This is the REST Api that will act as the backend for the application",
   "main": "app.js",
   "scripts": {
-    "test": "mocha -r ts-node/register 'test/**/*.ts'",
-    "start": "nodemon ./dist/app.js"
+    "test": "mocha  'test/**/*.js'",
+    "start": "nodemon ./app.js"
   },
   "repository": {
     "type": "git",
