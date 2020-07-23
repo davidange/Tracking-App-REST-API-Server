@@ -26,11 +26,21 @@ mongoose.connect(
 //to parse incoming requests
 app.use(express.json());
 
-//Documentation middleware
+//Documentation route
 app.use("/api-docs", express.static("./docs"));
 
 //routes Middlewares
-app.use("/api/user/", authRouter);
+app.use("/user/", authRouter);
+
+
+//Error Middleware
+app.use((error, req, res, next) => {
+	console.log(error);
+	const status = error.statusCode || 500;
+	const message = error.message;
+	const data = error.data;
+	res.status(status).json({ message: message, data: data });
+  });
 
 //start application
 app.listen(port, () => {

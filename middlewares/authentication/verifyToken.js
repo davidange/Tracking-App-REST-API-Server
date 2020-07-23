@@ -1,16 +1,30 @@
-import jwt from "jsonwebtoken";
+const jwt =require( "jsonwebtoken");
 
-export function auth(req, res, next) {
-	console.log(req);
-	console.log("-------------");
-	const token = req.header("auth-token");
-
-	try {
-		if (!token) return res.status(401).send("Acces Denied");
-		const verified = jwt.verify(token, process.env.TOKEN_SECRET);
-		req.user = verified;
-		return next();
-	} catch (err) {
-		return res.status(400).send("Invalid Token");
+module.exports = (req, res, next)=> {
+	
+	const token = req.get("Authorization");
+	//if no token header
+	if(!token){
+		const error=new Error('Not Authenticated');
+		error.statusCode=401;
+		throw error;
 	}
+	//if token header
+	let decodedToken;
+	try {
+		 decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
+	} catch (err) {
+		err.statusCode = 500;
+		throw error;
+	}
+	if(!decodedToken){
+		const error=new Error('Not Authenticated');
+		error.statusCode=401;
+		throw error;
+	}
+	//if authenticated
+	req.user=decodedToken;
+	next();
 }
+
+

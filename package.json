@@ -4,9 +4,9 @@
   "description": "This is the REST Api that will act as the backend for the application",
   "main": "app.js",
   "scripts": {
-    "test": "mocha  'test/**/*.js'",
+    "test": " mocha --recursive",
     "start": " nodemon ./app.js ",
-    "doc":"apidoc -i ./ -e node_modules -o ./docs"
+    "doc": "apidoc -i ./ -e node_modules -o ./docs"
   },
   "repository": {
     "type": "git",
@@ -20,9 +20,7 @@
     "express": "^4.17.1",
     "express-validator": "^6.6.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.9.20",
-    "swagger-jsdoc": "^4.0.0",
-    "swagger-ui-express": "^4.1.4"
+    "mongoose": "^5.9.20"
   },
   "devDependencies": {
     "apidoc": "^0.23.0",
