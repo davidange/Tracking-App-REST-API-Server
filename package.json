@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "mocha  'test/**/*.js'",
-    "start": "nodemon ./app.js"
+    "start": " nodemon ./app.js ",
+    "doc":"apidoc -i ./ -e node_modules -o ./docs"
   },
   "repository": {
     "type": "git",
@@ -19,7 +20,9 @@
     "express": "^4.17.1",
     "express-validator": "^6.6.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.9.20"
+    "mongoose": "^5.9.20",
+    "swagger-jsdoc": "^4.0.0",
+    "swagger-ui-express": "^4.1.4"
   },
   "devDependencies": {
     "apidoc": "^0.23.0",

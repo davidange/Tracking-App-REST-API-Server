@@ -1,9 +1,12 @@
 const express = require("express");
 const app = express();
 
+//mongoose (MongoDB)
 const mongoose = require("mongoose");
+//local variables(to not share passwords)
 const dotenv = require("dotenv");
 
+//port for the Server
 const port = process.env.PORT || 3000;
 
 //import Routes
@@ -22,6 +25,9 @@ mongoose.connect(
 //Middlewares
 //to parse incoming requests
 app.use(express.json());
+
+//Documentation middleware
+app.use("/api-docs", express.static("./docs"));
 
 //routes Middlewares
 app.use("/api/user/", authRouter);
