@@ -3,7 +3,7 @@ const app = express();
 
 //mongoose (MongoDB)
 const mongoose = require("mongoose");
-//local variables(to not share passwords)
+//local variables inside .env
 const dotenv = require("dotenv");
 
 //port for the Server

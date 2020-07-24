@@ -8,8 +8,17 @@ const registerUser = async (req, res, next) => {
 	const name = body.name;
 	const email = body.email;
 	const password = body.password;
+
 	//Check if User is already in DB
-	const emailExists = await User.findOne({ email: email });
+	try{
+		const emailExists = await User.findOne({ email: email });
+	}
+	catch(err){
+		if (!err.statusCode) {
+			err.statusCode = 500;
+		}
+		throw err;
+	}
 	//user Already Exist
 	if (emailExists) {
 		const error = new Error("User with that email already exists.");
@@ -42,6 +51,8 @@ const registerUser = async (req, res, next) => {
 		}
 		throw err;
 	}
+	
+	
 };
 
 const loginUser = async (req, res, next) => {
@@ -52,7 +63,6 @@ const loginUser = async (req, res, next) => {
 	//Check if User is already in DB
 	try {
 		const user = await User.findOne({ email: email });
-
 		if (user) {
 			//Pasword is correct?
 			const validPass = await bcrypt.compare(password, user.password);
@@ -83,10 +93,11 @@ const loginUser = async (req, res, next) => {
 		}
 
 	} catch (err) {
+		
 		if (!err.statusCode) {
 			err.statusCode = 500;
 		}
-		throw err
+		throw err;
 	}
 };
 
