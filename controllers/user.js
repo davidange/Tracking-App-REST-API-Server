@@ -10,10 +10,10 @@ const registerUser = async (req, res, next) => {
 	const password = body.password;
 
 	//Check if User is already in DB
-	try{
-		const emailExists = await User.findOne({ email: email });
-	}
-	catch(err){
+	let emailExists;
+	try {
+		emailExists = await User.findOne({ email: email });
+	} catch (err) {
 		if (!err.statusCode) {
 			err.statusCode = 500;
 		}
@@ -21,9 +21,9 @@ const registerUser = async (req, res, next) => {
 	}
 	//user Already Exist
 	if (emailExists) {
+		
 		const error = new Error("User with that email already exists.");
 		error.statusCode = 400;
-		error.data = errors.array();
 		throw error;
 		//return res.status(400).send("User with that email already exists.");
 	}
@@ -38,7 +38,6 @@ const registerUser = async (req, res, next) => {
 		email: email,
 		password: hashPassword,
 	});
-
 	try {
 		const savedUser = await user.save();
 		return res.status(201).send({
@@ -51,8 +50,6 @@ const registerUser = async (req, res, next) => {
 		}
 		throw err;
 	}
-	
-	
 };
 
 const loginUser = async (req, res, next) => {
@@ -73,7 +70,6 @@ const loginUser = async (req, res, next) => {
 					{
 						email: email,
 						_id: user._id,
-						
 					},
 					process.env.TOKEN_SECRET,
 					{
@@ -83,17 +79,15 @@ const loginUser = async (req, res, next) => {
 				return res
 					.status(200)
 					.header("auth-token", token)
-					.send("Successfully logged in!");
+					.send({message:"Successfully logged in!"});
 			}
-		}else {
+		} else {
 			//not valid password OR user does not exist
 			const error = new Error("Wrong password or Email!");
 			error.statusCode = 401;
 			throw error;
 		}
-
 	} catch (err) {
-		
 		if (!err.statusCode) {
 			err.statusCode = 500;
 		}
