@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const port = process.env.PORT || 3000;
 
-const authRouter = require("./routes/auth");
+const userRouter = require("./routes/userRoutes");
 
 //-------------------------------------------------------------
 dotenv.config();
@@ -26,8 +26,8 @@ app.use(express.json());
 //Documentation route
 app.use("/api-docs", express.static("./docs"));
 
-//authorizationRouter Middlewares
-app.use("/user/", authRouter);
+//userRouter Middlewares
+app.use("/user/", userRouter);
 
 
 //Error Middleware
