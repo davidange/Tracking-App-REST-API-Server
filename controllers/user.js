@@ -21,7 +21,6 @@ const registerUser = async (req, res, next) => {
 	}
 	//user Already Exist
 	if (emailExists) {
-		
 		const error = new Error("User with that email already exists.");
 		error.statusCode = 400;
 		throw error;
@@ -76,10 +75,11 @@ const loginUser = async (req, res, next) => {
 						expiresIn: "1h",
 					}
 				);
-				return res
-					.status(200)
-					.header("auth-token", token)
-					.send({message:"Successfully logged in!"});
+				return res.status(200).send({
+					message: "Successfully logged in!",
+					token: token,
+					expires_in:3600
+				});
 			}
 		} else {
 			//not valid password OR user does not exist

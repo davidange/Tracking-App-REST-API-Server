@@ -14,7 +14,7 @@ module.exports = (req, res, next) => {
 	let decodedToken;
 	if (!token) {
 		const error = new Error("Invalid Format Token");
-		error.statusCode = 401;
+		error.statusCode = 400;
 		throw error;
 	}
 	try {

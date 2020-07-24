@@ -41,15 +41,16 @@ router.post("/register", userValidator.registerValidationUser,wrapper(userContro
 * @apiParam {String} password
 *
 * @apiSuccess {String} message Message indicating status
-* @apiSuccess {String} auth-token Token which can be used for further API calls.
+* @apiSuccess {String} token Token which can be used for further API calls.
+* @apiSuccess {number} expires_in Number of seconds that the token is still valid.
 *
 * @apiSuccessExample {json} Success-Response
 *   HTTP/1.1 200 OK
-*   {
-*       "message": "Succesfully!",
-*   }
-*   header:
-*  { auth-token: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}
+* {
+*    "message": "Successfully logged in!",
+*    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QxQHRlc3QuY29tIiwiX2lkIjoiNWYxYWI4ZDJiMjI5NzYxYzVjY2RkNDhiIiwiaWF0IjoxNTk1NjAyNjgwLCJleHAiOjE1OTU2MDYyODB9.7HvWH_M7Da98ivrXFvMiMhmUwHJyvd_mOTJzdP2nFvc",
+*    "expires_in": 3600
+* }
 *
 */
 router.post("/login", userValidator.loginValidationUser, wrapper(userController.loginUser));

@@ -79,12 +79,16 @@ describe("User ", () => {
 					this.statusCode = number;
 					return this;
 				},
-				send: (message) => {
-					return message;
-				},
+				send: sinon.spy()
 			};
+
+
 			await userController.loginUser(req, res, () => {});
-			expect(res.headers).has.property("auth-token").that.is.not.null;
+			
+			expect(res.send.calledOnce).to.be.true;
+			expect(res.send.firstCall.args[0]).to.have.property('message');
+			expect(res.send.firstCall.args[0]).to.have.property('expires_in');
+			expect(res.send.firstCall.args[0]).to.have.property('token');
 			expect(res.statusCode).to.equal(200);
 		});
 	});
