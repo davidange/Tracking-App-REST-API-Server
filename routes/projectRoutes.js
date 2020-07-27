@@ -34,7 +34,7 @@ router.post("/update",verifyBimPlusToken,wrapper(projectController.updateProject
 
 
 /**
-* @api {get} projects/get_all Get List of Projects
+* @api {get} projects Get List of Projects
 * @apiName Get List Of Projects
 * @apiGroup Project
 * @apiDescription Gets a list of the projects available at Bimplus.
@@ -53,7 +53,7 @@ router.post("/update",verifyBimPlusToken,wrapper(projectController.updateProject
 *      ]
 *}
 */
-router.get('/get_all',verifyBimPlusToken,wrapper(projectController.getProjects));
+router.get('',verifyBimPlusToken,wrapper(projectController.getProjects));
 
 
 module.exports=router;

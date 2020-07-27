@@ -21,7 +21,8 @@ module.exports = function (app) {
 
 	//update every hour Token Data
 	setInterval(async () => {
-		bimPlusTokenData = await getBimPlusToken(
+		
+		bimPlusTokenData = await getBimPlusToken.requestAutenticationToken(
 			process.env.BIMPLUS_USER,
 			process.env.BIMPLUS_PASSWORD,
 			process.env.BIMPLUS_APPLICATION_ID

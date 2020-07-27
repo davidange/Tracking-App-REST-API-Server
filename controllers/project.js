@@ -15,8 +15,6 @@ const updateProjects = async (req, res) => {
 
 		projects.push(project);
 	}
-	console.log("------------");
-	console.log(projects);
 	//
 	try {
 		for (project of projects) {
@@ -55,9 +53,15 @@ const getProjects = async (req, res) => {
 	}
 	if (projects.length === 0) {
 		return res.status(204);
-	}
+    }
+    
+    //return only usefult info
+    const projectsSimplified=projects.map((project)=>{
+        return{name:project.name,id_bimplus:project.id_bimplus,id:project._id}
+    })
+
 	return res.status(200).send({
-		projects: projects,
+		projects: projectsSimplified
 	});
 };
 
