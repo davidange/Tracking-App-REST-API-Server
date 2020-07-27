@@ -5,16 +5,18 @@ const dotenv = require("dotenv");
 const port = process.env.PORT || 3000;
 
 const userRouter = require("./routes/userRoutes");
+const projectRouter = require("./routes/projectRoutes");
 
 //-------------------------------------------------------------
 dotenv.config();
 // creates & updates Token for Bimplus API
-require('./config/bimPlusTokenGenerator')(app);
+require("./config/bimPlusTokenGenerator")(app);
 
 //-------------------------------------------------------------
 //connect to DB
 mongoose.connect(
-	process.env.DB_CONNECT,
+	//process.env.DB_CONNECT,
+	process.env.DB_DEVELOPMENT,
 	{ useUnifiedTopology: true, useNewUrlParser: true },
 	() => console.log("connected to DB!")
 );
@@ -28,7 +30,8 @@ app.use("/api-docs", express.static("./docs"));
 
 //userRouter Middlewares
 app.use("/user/", userRouter);
-
+//ProjectRouters Middlewares
+app.use("/projects/", projectRouter);
 
 //Error Middleware
 app.use((error, req, res, next) => {
@@ -37,10 +40,9 @@ app.use((error, req, res, next) => {
 	const message = error.message;
 	const data = error.data;
 	res.status(status).json({ message: message, data: data });
-  });
+});
 //-------------------------------------------------------------
 //start application
 app.listen(port, () => {
 	console.log("Server Up and running");
 });
-
