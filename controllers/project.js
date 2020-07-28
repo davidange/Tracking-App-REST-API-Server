@@ -52,16 +52,59 @@ const getProjects = async (req, res) => {
 		throw err;
 	}
 	if (projects.length === 0) {
-		return res.status(204);
-    }
-    
-    //return only usefult info
-    const projectsSimplified=projects.map((project)=>{
-        return{name:project.name,id_bimplus:project.id_bimplus,id:project._id}
-    })
+		return res.status(204).send();
+	}
+
+	//return only usefult info
+	const projectsSimplified = projects.map((project) => {
+		return {
+			name: project.name,
+			id_bimplus: project.id_bimplus,
+			id: project._id,
+		};
+	});
 
 	return res.status(200).send({
-		projects: projectsSimplified
+		projects: projectsSimplified,
+	});
+};
+
+const getProject = async (req, res) => {
+	const bimPlusAuthToken = req.app.get("BimPlusToken")["access_token"]; // already verified that exists through middleware
+	const id = req.params.project_id;
+
+	//validate id 
+	if(!require('mongoose').Types.ObjectId.isValid(id)){
+		console.log("Not Found")
+		return res.status(404).send();
+	}
+
+	let project;
+	try {
+		console.log('Searching')
+		project = await Project.findOne({ _id: id });
+	
+	} catch (err) {
+		if (!err.statusCode) {
+			err.statusCode = 500;
+		}
+		throw err;
+	}
+	if (!project || project===null) {
+		console.log("Not Found")
+		return res.status(404).send();
+	}
+	console.log('Found')
+	console.log(project);
+	//return only usefult info
+	const projectSimplified = {
+		name: project.name,
+		id_bimplus: project.id_bimplus,
+		id: project._id,
+	};
+
+	return res.status(200).send({
+		project: projectSimplified,
 	});
 };
 
@@ -77,4 +120,4 @@ const getProjectsInfo = async (access_token) => {
 	return data;
 };
 
-module.exports = { updateProjects, getProjects };
+module.exports = { updateProjects, getProjects, getProject };

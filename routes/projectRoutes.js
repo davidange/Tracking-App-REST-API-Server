@@ -11,7 +11,7 @@ let wrapper = fn => (...args) => fn(...args).catch(args[2]);
 
 
 /**
-* @api {post} projects/update Update List of Projects
+* @api {post} projects Update List of Projects
 * @apiName UpdateProjectList
 * @apiGroup Project
 * @apiDescription Get List of Projects
@@ -29,7 +29,7 @@ let wrapper = fn => (...args) => fn(...args).catch(args[2]);
 *   }
 *
 */
-router.post("/update",verifyBimPlusToken,wrapper(projectController.updateProjects));
+router.post("",verifyBimPlusToken,wrapper(projectController.updateProjects));
 
 
 
@@ -54,6 +54,11 @@ router.post("/update",verifyBimPlusToken,wrapper(projectController.updateProject
 *}
 */
 router.get('',verifyBimPlusToken,wrapper(projectController.getProjects));
+
+
+
+
+router.get('/:project_id',verifyBimPlusToken,wrapper(projectController.getProject))
 
 
 module.exports=router;
