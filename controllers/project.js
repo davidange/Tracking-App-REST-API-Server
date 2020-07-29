@@ -1,174 +1,74 @@
 const Project = require("../models/project");
-const axios = require("axios");
+const projectServices = require("../services/project-services");
 
 const updateProjects = async (req, res) => {
-	const bimPlusAuthToken = req.app.get("BimPlusToken")["access_token"]; // already verified that exists in middleware
-	//Create model of each Project
-	const projectsInfo = await getProjectsInfo(bimPlusAuthToken);
-	const projects = [];
-	for (projectInfo of projectsInfo) {
-		const project = new Project({
-			slug: projectInfo.slug,
-			name: projectInfo.name,
-			id_bimplus: projectInfo.id,
-		});
-
-		projects.push(project);
-	}
-	//
+	const bimPlusAuthToken = req.app.get("BimPlusToken")["access_token"];
 	try {
-		for (project of projects) {
-			//update model
-			const filter = { id_bimplus: project.id_bimplus };
-			const update = { slug: project.slug, name: project.name };
-			let doc = await Project.findOneAndUpdate(filter, update, {
-				new: true,
-				upsert: true,
-			});
-			//note As of right now it does not delete projects(only updates them)
-		}
+		const projects = await projectServices.update(bimPlusAuthToken);
+		return res.status(201).send({
+			message: "Successfully Updated List of Projects.",
+			projects: projects,
+		});
 	} catch (err) {
 		if (!err.statusCode) {
 			err.statusCode = 500;
 		}
 		throw err;
 	}
-
-	//TODO add logic to update/register projects in DB
-	return res.status(201).send({
-		message: "Successfully Updated List of Projects.",
-	});
 };
 
 const getProjects = async (req, res) => {
-	const bimPlusAuthToken = req.app.get("BimPlusToken")["access_token"]; // already verified that exists through middleware
-	let projects = [];
+	const bimPlusAuthToken = req.app.get("BimPlusToken")["access_token"];
 	try {
-		projects = await Project.find({});
+		const projects = await projectServices.getAll(bimPlusAuthToken);
+		if (projects.length === 0) {
+			return res.status(204).send();
+		}
+		return res.status(200).send({
+			projects: projects,
+		});
 	} catch (err) {
 		if (!err.statusCode) {
 			err.statusCode = 500;
 		}
 		throw err;
 	}
-	if (projects.length === 0) {
-		return res.status(204).send();
-	}
-
-	//return only usefult info
-	const projectsSimplified = projects.map((project) => {
-		return {
-			name: project.name,
-			id_bimplus: project.id_bimplus,
-			id: project._id,
-		};
-	});
-
-	return res.status(200).send({
-		projects: projectsSimplified,
-	});
 };
 
 const getProject = async (req, res) => {
 	const bimPlusAuthToken = req.app.get("BimPlusToken")["access_token"]; // already verified that exists through middleware
-	const id = req.params.project_id;
-
-	//validate id
-	if (!require("mongoose").Types.ObjectId.isValid(id)) {
-		console.log("Not Found");
-		return res.status(404).send();
-	}
-
-	let project;
+	const projectId = req.params.project_id;
+	//TODO ADD middleware Validator for ID
 	try {
-		console.log("Searching");
-		project = await Project.findOne({ _id: id });
+		const project = await projectServices.get(projectId);
+		return res.status(200).send({
+			project: project,
+		});
 	} catch (err) {
 		if (!err.statusCode) {
 			err.statusCode = 500;
 		}
 		throw err;
 	}
-	if (!project || project === null) {
-		console.log("Not Found");
-		return res.status(404).send();
-	}
-	console.log("Found");
-	console.log(project);
-	//return only usefult info
-	const projectSimplified = {
-		name: project.name,
-		id_bimplus: project.id_bimplus,
-		id: project._id,
-	};
-
-	return res.status(200).send({
-		project: projectSimplified,
-	});
 };
 
 const getModels = async (req, res) => {
 	const bimPlusAuthToken = req.app.get("BimPlusToken")["access_token"]; // already verified that exists through middleware
-	const id = req.params.project_id;
-	//validate id
-	if (!require("mongoose").Types.ObjectId.isValid(id)) {
-		return res.status(404).send();
-	}
+	const projectId = req.params.project_id;
+	//TODO Add Middleware Validator
 	try {
-		const project = await Project.findOne({ _id: id });
-		if(project === null){
-			return res.status(404).send();
-		}
-		const models=await getModelList(bimPlusAuthToken,project.slug);
-		console.log(models);
+		const models = await projectServices.getModels(bimPlusAuthToken, projectId);
 		return res.status(200).send({
 			models: models,
 		});
-
 	} catch (err) {
 		if (!err.statusCode) {
 			err.statusCode = 500;
 		}
 		throw err;
 	}
-
 };
 
-//Private function
-const getProjectsInfo = async (access_token) => {
-	const headers = {
-		Authorization: "BimPlus " + access_token,
-	};
-	const response = await axios.get("https://api-stage.bimplus.net/v2/teams", {
-		headers,
-	});
-	const data = response.data;
-	return data;
-};
 
-//Private function
-const getModelList = async (access_token, slug) => {
-	const headers = {
-		Authorization: "BimPlus " + access_token,
-	};
-	const response = await axios.get(
-		"https://api-stage.bimplus.net/v2/" + slug + "/divisions",
-		{
-			headers,
-		}
-	);
-	const data = response.data;
-	//clean data 
-	modelList=data.map((model)=>{
-		return{
-			name: model.name,
-			description: model.description,
-			topologyId:model.topologyId,
-			bimPlusId:model.id,
-		}
-	});
-	
-	return modelList;
-};
 
-module.exports = { updateProjects, getProjects, getProject ,getModels};
+module.exports = { updateProjects, getProjects, getProject, getModels };

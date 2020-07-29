@@ -21,14 +21,14 @@ const register = async (name, email, password) => {
 	const salt = await bcrypt.genSalt(10);
 	const hashPassword = await bcrypt.hash(password, salt);
 	//create New User
-	const user = new User({
+	const newUser = new User({
 		name: name,
 		email: email,
 		password: hashPassword,
 	});
 
 	//save User
-	return await user.save();
+	return await newUser.save();
 };
 
 /**
@@ -40,7 +40,7 @@ const register = async (name, email, password) => {
 const login = async (email, password) => {
 	const user = await User.findOne({ email: email });
 	//user Found
-	if (!user === null) {
+	if (user !== null) {
 		const validPassword = await bcrypt.compare(password, user.password);
 		if (validPassword) {
 			const token = jwt.sign(

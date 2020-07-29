@@ -30,7 +30,7 @@ let wrapper = fn => (...args) => fn(...args).catch(args[2]);
 *   }
 *
 */
-router.post("",verifyBimPlusToken,wrapper(projectController.updateProjects));
+router.post("/update",verifyBimPlusToken,wrapper(projectController.updateProjects));
 
 
 
@@ -66,6 +66,7 @@ router.get('/:project_id/models',verifyBimPlusToken,wrapper(projectController.ge
 
 //TODO Add Documentation
 //Defines Model that contains the Beacons
+router.post('/:project_id',verifyBimPlusToken,wrapper(projectController.setBeaconModel));
 
 //TODO Add Documentation
 //Post models that 
