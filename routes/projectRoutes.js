@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
  const projectController = require("../controllers/project");
+ const beaconsController=require('../controllers/beacon');
  const verifyBimPlusToken=require('../middlewares/authentication/verifyBimPlusToken');
 // const projectValidator = require("../middlewares/validators/user");
 
@@ -55,10 +56,22 @@ router.post("",verifyBimPlusToken,wrapper(projectController.updateProjects));
 */
 router.get('',verifyBimPlusToken,wrapper(projectController.getProjects));
 
+//TODO: Add documentation
+//should return info of project & registered beacons
+router.get('/:project_id',verifyBimPlusToken,wrapper(projectController.getProject));
 
+//TODO: Add Documentation
+//list available models
+router.get('/:project_id/models',verifyBimPlusToken,wrapper(projectController.getModels))
 
+//TODO Add Documentation
+//Defines Model that contains the Beacons
 
-router.get('/:project_id',verifyBimPlusToken,wrapper(projectController.getProject))
+//TODO Add Documentation
+//Post models that 
 
+//TODO: Add Documentation and implementation, should return list of all available beacons and registered beacons.
+//router.get('/:project_id/beacons',verifyBimPlusToken,wrapper(beaconsController.getAllBeacons))
 
+router.get('/:project_id/beacons/available-beacons',verifyBimPlusToken,wrapper(beaconsController.getAvailableBeacons))
 module.exports=router;
