@@ -66,10 +66,11 @@ router.get('/:project_id/models',verifyBimPlusToken,wrapper(projectController.ge
 
 //TODO Add Documentation
 //Defines Model that contains the Beacons
-router.post('/:project_id',verifyBimPlusToken,wrapper(projectController.setBeaconModel));
+router.post('/:project_id/beacons-model',verifyBimPlusToken,wrapper(projectController.setBeaconsModel));
 
 //TODO Add Documentation
-//Post models that 
+//Removes Model that contains the Beacons
+router.delete('/:project_id/beacons-model',verifyBimPlusToken,wrapper(projectController.deleteBeaconsModel));
 
 //TODO: Add Documentation and implementation, should return list of all available beacons and registered beacons.
 //router.get('/:project_id/beacons',verifyBimPlusToken,wrapper(beaconsController.getAllBeacons))

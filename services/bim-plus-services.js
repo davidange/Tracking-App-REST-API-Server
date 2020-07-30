@@ -23,13 +23,7 @@ const getProjects = async (access_token) => {
 			}
 		);
 	}
-	// projects.forEach((project, index) => {
-	// 	return (projects[index] = {
-	// 		slug: project.slug,
-	// 		name: project.name,
-	// 		id_bimplus: project.id,
-	// 	});
-	// });
+
 	return projectsList;
 };
 /**
@@ -60,5 +54,6 @@ const getModels = async (access_token, slug) => {
 
 	return modelList;
 };
+
 
 module.exports = { getProjects, getModels };

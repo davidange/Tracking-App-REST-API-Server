@@ -55,11 +55,12 @@ const getProject = async (req, res) => {
 const getModels = async (req, res) => {
 	const bimPlusAuthToken = req.app.get("BimPlusToken")["access_token"]; // already verified that exists through middleware
 	const projectId = req.params.project_id;
+
 	//TODO Add Middleware Validator
 	try {
-		const models = await projectServices.getModels(bimPlusAuthToken, projectId);
+		const models = await projectServices.getModels( projectId);
 		return res.status(200).send({
-			models: models,
+			models
 		});
 	} catch (err) {
 		if (!err.statusCode) {
@@ -69,6 +70,37 @@ const getModels = async (req, res) => {
 	}
 };
 
+const setBeaconsModel=async(req,res)=>{
+	const bimPlusAuthToken= req.app.get("BimPlusToken")["access_token"];
+	const projectId=req.params.project_id;
+	const modelId=req.body.model_id;
+	try{
+		await projectServices.setBeaconsModel(projectId,modelId,bimPlusAuthToken);
+		return res.status(200).send({
+			message:"Successfully set Beacons Model"
+		})
 
+	}catch (err) {
+		if (!err.statusCode) {
+			err.statusCode = 500;
+		}
+		throw err;
+	}
+}
 
-module.exports = { updateProjects, getProjects, getProject, getModels };
+const deleteBeaconsModel=async(req, res)=>{
+	const projectId=req.params.project_id;
+	try{
+		await projectServices.deleteModels(projectId)
+		return res.status(200).send({
+			message:"Successfully Removed Beacons Model"
+		})
+	}catch (err) {
+		if (!err.statusCode) {
+			err.statusCode = 500;
+		}
+		throw err;
+	}
+}
+
+module.exports = { updateProjects, getProjects, getProject, getModels,setBeaconsModel,deleteBeaconsModel };

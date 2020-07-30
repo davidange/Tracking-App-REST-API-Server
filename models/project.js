@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Model=require('./model/model');
+const BeaconsModel=require('./model/beacons-model')
 
 
 
@@ -15,6 +16,9 @@ const projectSchema = new mongoose.Schema({
 	},
 	models:{
 		type:[Model.schema]
+	},
+	beacons_model:{
+		type:BeaconsModel.schema
 	}
 });
 
