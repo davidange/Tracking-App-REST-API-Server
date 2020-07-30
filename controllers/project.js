@@ -105,9 +105,8 @@ const getBeaconsModel = async (req, res) => {
 	const projectId = req.params.project_id;
 	try {
 		const model = await projectServices.getBeaconsModel(projectId);
-		console.log(model);
 		return res.status(200).send({
-			model: model,
+			beacons_model: model,
 		});
 	} catch (err) {
 		if (!err.statusCode) {

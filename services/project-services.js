@@ -88,14 +88,15 @@ const setBeaconsModel = async (projectId, modelId) => {
 };
 
 const getBeaconsModel = async (projectId) => {
-	const beaconsModel = await Project.findById(projectId, { beacons_model: 1 });
-
+	const beaconsModel = await Project.findById(projectId);
 	if (beaconsModel === null) {
 		const error = new Error("Beacons Model was Not Found");
 		error.statusCode = 404;
 		throw error;
 	}
-	return beaconsModel.beacons_model;
+	const beaconId=beaconsModel.beacons_model._id;
+	const beaconsModelInfo=beaconsModel.models.id(beaconId);
+	return {...beaconsModel.beacons_model.toObject(),...beaconsModelInfo.toObject()};
 };
 
 const deleteBeaconsModel = async (projectId) => {
