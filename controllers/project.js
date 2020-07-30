@@ -1,4 +1,4 @@
-const Project = require("../models/project");
+
 const projectServices = require("../services/project-services");
 
 const updateProjects = async (req, res) => {
@@ -6,7 +6,7 @@ const updateProjects = async (req, res) => {
 	try {
 		const projects = await projectServices.update(bimPlusAuthToken);
 		return res.status(201).send({
-			message: "Successfully Updated List of Projects.",
+			message: "Successfully Updated List of Projects & Its Models",
 			projects: projects,
 		});
 	} catch (err) {

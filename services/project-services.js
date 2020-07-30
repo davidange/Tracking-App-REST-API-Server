@@ -1,4 +1,5 @@
 const Project = require("../models/project");
+const Model = require("../models/model/model");
 const bimPlusServices = require("./bim-plus-services");
 /**
  * Updates the list of Projects in the Database
@@ -9,14 +10,21 @@ const bimPlusServices = require("./bim-plus-services");
 const update = async (bimPlusAuthToken) => {
 	const projects = await bimPlusServices.getProjects(bimPlusAuthToken);
 
-	//update BimPlus list of projects
+	//update list of projects in database
 	for (project of projects) {
-		const filter = { id_bimplus: project.id_bimplus };
-		const update = { slug: project.slug, name: project.name };
-		let doc = await Project.findOneAndUpdate(filter, update, {
+		//get List of models
+		const models = await bimPlusServices.getModels(bimPlusAuthToken, project.slug);
+		console.log(' -----------------------')
+		const update = { slug: project.slug, name: project.name};
+		let doc = await Project.findByIdAndUpdate(project._id, update, {
 			new: true,
 			upsert: true,
-		});
+		});//updates main document
+		//updates subdocuments of models
+		
+	
+
+		
 	}
 	return projects;
 };
@@ -32,14 +40,6 @@ const getAll = async () => {
 		throw error;
 	}
 
-	//return only usable Data
-	projects = projects.map((project) => {
-		return {
-			name: project.name,
-			id_bimplus: project.id_bimplus,
-			id: project._id,
-		};
-	});
 	return projects;
 };
 /**
@@ -48,26 +48,15 @@ const getAll = async () => {
  * @returns project
  */
 const get = async (projectId) => {
-	let project = await Project.findOne({ _id: projectId });
+	let project = await Project.findById(projectId);
 	if (project === null) {
 		const error = new Error("Project was Not Found");
 		error.statusCode = 404;
 		throw error;
 	}
 	//return only usefult info
-	const projectSimplified = {
-		name: project.name,
-		id_bimplus: project.id_bimplus,
-		id: project._id,
-	};
-	return projectSimplified;
+	return project;
 };
 
-const getModels = async (bimPlusAuthToken,projectId) => {
-    const project = await Project.findOne({ _id: projectId });
-    const slug= project.slug;
-    const models= await bimPlusServices.getModels(bimPlusAuthToken,slug);
-    return models
 
-};
-module.exports = { update, get, getAll, getModels };
+module.exports = { update, get, getAll };

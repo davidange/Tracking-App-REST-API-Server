@@ -16,11 +16,11 @@ const getProjects = async (access_token) => {
 	const projectsList = [];
 	for (project of projects) {
 		projectsList.push(
-			new Project({
+			{
 				slug: project.slug,
 				name: project.name,
-				id_bimplus: project.id,
-			})
+				_id: project.id,
+			}
 		);
 	}
 	// projects.forEach((project, index) => {
@@ -49,13 +49,12 @@ const getModels = async (access_token, slug) => {
 		}
 	);
 	const models = response.data;
-	console.log(models)
 	const modelList = models.map((model) => {
 		return {
 			name: model.name,
 			description: model.description,
-			topologyId: model.topologyId,
-			bimPlusId: model.id,
+			id_topology: model.topologyId,
+			_id: model.id,
 		};
 	});
 

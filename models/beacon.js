@@ -2,13 +2,9 @@
 const mongoose = require("mongoose");
 
 const beaconSchema = new mongoose.Schema({
-	name: {
+	_id: String,
+	id_beacon:{ //TODO modify name of id_beacon property
 		type: String,
-		required: true,
-	},
-	id_bimplus:{
-		type: String,
-		required: true,
 		unique: true
 	}
 });

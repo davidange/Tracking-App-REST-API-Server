@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
+const Model=require('./model/model');
 
 
 
 const projectSchema = new mongoose.Schema({
+	_id:String,
 	slug:{
 		type: String,
 		required: true
@@ -11,10 +13,8 @@ const projectSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	id_bimplus:{
-		type: String,
-		required: true,
-		unique: true
+	models:{
+		type:[Model.schema]
 	}
 });
 
