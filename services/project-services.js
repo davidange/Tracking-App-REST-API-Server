@@ -3,7 +3,6 @@ const Model = require("../models/model/model");
 const BeaconsModel = require("../models/model/beacons-model");
 const bimPlusServices = require("./bim-plus-services");
 
-
 /**
  * Updates the list of Projects in the Database
  * TODO : Define what happens when project is removed.
@@ -11,31 +10,47 @@ const bimPlusServices = require("./bim-plus-services");
  * @returns {JSON} Array of projects available
  */
 const update = async (bimPlusAuthToken) => {
-	const projects = await bimPlusServices.getProjects(bimPlusAuthToken);
-	console.log(" -----------------------");
-	console.log(projects);
-	//update list of projects in database
-	for (project of projects) {
-		//get List of models
-		const models = await bimPlusServices.getModels(
+	let allProjects = [];
+	const teams = await bimPlusServices.getTeams(bimPlusAuthToken);
+
+	for (team of teams) {
+		const projects = await bimPlusServices.getProjects(
 			bimPlusAuthToken,
-			project.slug
+			team.slug
 		);
-		const update = { slug: project.slug, name: project.name, models: models };
-		let doc = await Project.findByIdAndUpdate(project._id, update, {
-			new: true,
-			upsert: true,
-		}); //updates main document
-		//updates subdocuments of models
+		//update list of projects in database
+		for (project of projects) {
+			project.team_name=team.name;
+			project.team_id=team._id;
+			//get List of models for that project
+			const models = await bimPlusServices.getModels(
+				bimPlusAuthToken,
+				team.slug,
+				project._id
+			);
+			const update = {
+				slug: team.slug,
+				name: project.name,
+				team_name: team.name,
+				team_id:team.team_id,
+				models: models,
+			};
+			let doc = await Project.findByIdAndUpdate(project._id, update, {
+				new: true,
+				upsert: true,
+			}); //updates main document
+			//updates subdocuments of models
+		}
+		allProjects = [...allProjects, ...projects];
 	}
-	return projects;
+	return allProjects;
 };
 /**
  * Gets list of all Projects saved on Database
  * @returns list of All Projects saved on Db
  */
 const getAll = async () => {
-	let projects = await Project.find({}, { name: 1, slug: 1 });
+	let projects = await Project.find({}, { name: 1, slug: 1,team_name:1 });
 	if (projects === null) {
 		const error = new Error("There are no Projects Registered.");
 		error.statusCode = 404;
@@ -44,6 +59,8 @@ const getAll = async () => {
 
 	return projects;
 };
+
+
 /**
  * Get project that has same id as projectId
  * @param  {String} projectId
@@ -94,9 +111,12 @@ const getBeaconsModel = async (projectId) => {
 		error.statusCode = 404;
 		throw error;
 	}
-	const beaconId=beaconsModel.beacons_model._id;
-	const beaconsModelInfo=beaconsModel.models.id(beaconId);
-	return {...beaconsModel.beacons_model.toObject(),...beaconsModelInfo.toObject()};
+	const beaconId = beaconsModel.beacons_model._id;
+	const beaconsModelInfo = beaconsModel.models.id(beaconId);
+	return {
+		...beaconsModel.beacons_model.toObject(),
+		...beaconsModelInfo.toObject(),
+	};
 };
 
 const deleteBeaconsModel = async (projectId) => {

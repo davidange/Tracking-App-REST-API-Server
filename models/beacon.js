@@ -6,7 +6,9 @@ const beaconSchema = new mongoose.Schema({
 	id_beacon:{ //TODO modify name of id_beacon property
 		type: String,
 		unique: true
-	}
+	},
+	name:String,
+	is_active:{type: Boolean,default: false}
 });
 
 

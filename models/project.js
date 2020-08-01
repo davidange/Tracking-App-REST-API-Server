@@ -14,6 +14,12 @@ const projectSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	team_name:{
+		type: String
+	},
+	team_id:{
+		type: String
+	},
 	models:{
 		type:[Model.schema]
 	},
