@@ -6,8 +6,11 @@
   "scripts": {
     "test": " mocha --recursive",
     "start": " node ./app.js ",
-    "dev":"nodemon ./app.js",
+    "dev": "nodemon ./app.js",
     "build": "apidoc -i ./ -e node_modules -o ./docs"
+  },
+  "engines": {
+    "node": "12.x"
   },
   "repository": {
     "type": "git",
