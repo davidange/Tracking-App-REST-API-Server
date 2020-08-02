@@ -6,6 +6,7 @@ const port = process.env.PORT || 3000;
 
 const userRouter = require("./routes/userRoutes");
 const projectRouter = require("./routes/projectRoutes");
+const beaconsRouter=require('./routes/beaconsRoutes');
 
 //-------------------------------------------------------------
 dotenv.config();
@@ -28,12 +29,13 @@ app.use(express.json());
 //Documentation route
 app.use("/api-docs", express.static("./docs"));
 
-//userRouter Middlewares
+//userRouter Routes
 app.use("/user/", userRouter);
-//ProjectRouters Middlewares
+//ProjectRouters Routes
 app.use("/projects/", projectRouter);
 
-app.use('/projects/:project_id/')
+//beaconsRouter Routes
+app.use('/projects/',beaconsRouter);
 
 //Error Middleware
 app.use((error, req, res, next) => {
