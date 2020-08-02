@@ -3,7 +3,7 @@ const Model = require("../models/model/model");
 const BeaconsModel = require("../models/model/beacons-model");
 const bimPlusServices = require("./bim-plus-services");
 const additionalFunctions = require("./additional-functions");
-const beacon = require("../controllers/beacon");
+const beacon = require("../controllers/beacon-info");
 
 /**
  * Updates the list of Projects in the Database

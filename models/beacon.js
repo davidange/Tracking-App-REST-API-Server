@@ -3,7 +3,7 @@ const Location = require("./location");
 
 const beaconSchema = new mongoose.Schema({
 	_id: String,
-	id_beacon: {
+	uid_beacon: {
 		//TODO modify name of id_beacon property
 		type: String,
 		unique: true,

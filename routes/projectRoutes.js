@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const projectController = require("../controllers/project");
-const beaconsController = require("../controllers/beacon");
+const beaconsController = require("../controllers/beacon-info");
 const verifyBimPlusToken = require("../middlewares/authentication/verifyBimPlusToken");
 // const projectValidator = require("../middlewares/validators/user");
 
