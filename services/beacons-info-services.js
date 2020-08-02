@@ -47,7 +47,7 @@ const setBeaconUID=async(projectId,beaconId,beaconUID)=>{
 		throw error;
 	}
 	beacon.uid_beacon=beaconUID;
-	console.log(beacon)
+	
 	await beacon.save(); //validate Subdocument Beacon
 	await project.save();//save Project Document
 	return beacon
