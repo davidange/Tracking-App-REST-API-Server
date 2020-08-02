@@ -6,7 +6,6 @@ const getBeacons = async (projectId) => {
 		"beacons_model.beacons": 1,
 		_id: 0,
 	});
-	console.log(beacons)
 	if(beacons === null){
 		const error =new Error('Project Not found');
 		error.statusCode=404;
@@ -20,5 +19,11 @@ const getBeacons = async (projectId) => {
 	return beacons.beacons_model.beacons;
 };
 
+const getActiveBeacons=async (projectId) =>{
+	const beacons=await getBeacons(projectId);
+	const activeBeacons=beacons.filter(beacon=>beacon.is_active===true);
+	return activeBeacons;
+}
 
-module.exports={getBeacons}
+
+module.exports={getBeacons,getActiveBeacons}
