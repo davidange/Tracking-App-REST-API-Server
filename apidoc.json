@@ -2,5 +2,6 @@
     "name": "BimPlus Beacon Tracking API",
     "version": "0.1.0",
     "description": "API documentation for the Bimplus Beacon Tracking Application",
-    "title": "BimPlus Beacon Tracking API"
+    "title": "BimPlus Beacon Tracking API",
+    "url":"https://tracking-bimplus-beacon.herokuapp.com"
   }

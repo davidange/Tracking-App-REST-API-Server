@@ -30,7 +30,7 @@ app.use(express.json());
 app.use("/api-docs", express.static("./docs"));
 
 //userRouter Routes
-app.use("/user/", userRouter);
+app.use("/user", userRouter);
 //ProjectRouters Routes
 app.use("/projects/", projectRouter);
 
