@@ -5,8 +5,9 @@
   "main": "app.js",
   "scripts": {
     "test": " mocha --recursive",
-    "start": " nodemon ./app.js ",
-    "doc": "apidoc -i ./ -e node_modules -o ./docs"
+    "start": " node ./app.js ",
+    "dev":"nodemon ./app.js",
+    "build": "apidoc -i ./ -e node_modules -o ./docs"
   },
   "repository": {
     "type": "git",
