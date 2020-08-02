@@ -2,7 +2,7 @@ const Beacon = require("../beacon");
 const mongoose = require("mongoose");
 
 const beaconsModel = new mongoose.Schema({
-	idBimplus:{type: String},
+	_id: String,
 	beacons: [Beacon.schema], //All Beacons
 });
 

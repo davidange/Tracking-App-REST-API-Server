@@ -33,6 +33,8 @@ app.use("/user/", userRouter);
 //ProjectRouters Middlewares
 app.use("/projects/", projectRouter);
 
+app.use('/projects/:project_id/')
+
 //Error Middleware
 app.use((error, req, res, next) => {
 	console.log(error);

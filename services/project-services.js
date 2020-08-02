@@ -2,6 +2,8 @@ const Project = require("../models/project");
 const Model = require("../models/model/model");
 const BeaconsModel = require("../models/model/beacons-model");
 const bimPlusServices = require("./bim-plus-services");
+const additionalFunctions = require("./additional-functions");
+const beacon = require("../controllers/beacon");
 
 /**
  * Updates the list of Projects in the Database
@@ -20,8 +22,8 @@ const update = async (bimPlusAuthToken) => {
 		);
 		//update list of projects in database
 		for (project of projects) {
-			project.team_name=team.name;
-			project.team_id=team._id;
+			project.team_name = team.name;
+			project.team_id = team._id;
 			//get List of models for that project
 			const models = await bimPlusServices.getModels(
 				bimPlusAuthToken,
@@ -32,7 +34,7 @@ const update = async (bimPlusAuthToken) => {
 				slug: team.slug,
 				name: project.name,
 				team_name: team.name,
-				team_id:team.team_id,
+				team_id: team.team_id,
 				models: models,
 			};
 			let doc = await Project.findByIdAndUpdate(project._id, update, {
@@ -50,7 +52,7 @@ const update = async (bimPlusAuthToken) => {
  * @returns list of All Projects saved on Db
  */
 const getAll = async () => {
-	let projects = await Project.find({}, { name: 1, slug: 1,team_name:1 });
+	let projects = await Project.find({}, { name: 1, slug: 1, team_name: 1 });
 	if (projects === null) {
 		const error = new Error("There are no Projects Registered.");
 		error.statusCode = 404;
@@ -59,7 +61,6 @@ const getAll = async () => {
 
 	return projects;
 };
-
 
 /**
  * Get project that has same id as projectId
@@ -82,7 +83,7 @@ const getModels = async (projectId) => {
 	return models.models;
 };
 
-const setBeaconsModel = async (projectId, modelId) => {
+const setBeaconsModel = async (projectId, modelId, bimPlusAuthToken) => {
 	const project = await get(projectId);
 	if (project.beacons_model !== null && project.beacons_model !== undefined) {
 		const error = new Error(
@@ -93,9 +94,66 @@ const setBeaconsModel = async (projectId, modelId) => {
 	}
 	//validate  that model is a model from the selected project
 	const models = await getModels(projectId);
-	if (models.some((model) => model._id === modelId)) {
-		project.beacons_model = new BeaconsModel({ _id: modelId });
+	const foundModel = models.find((model) => model._id === modelId);
 
+	if (foundModel) {
+		//getTopologyTree of Model
+		const topologyTree = await bimPlusServices.getObjectTree(
+			bimPlusAuthToken,
+			project.slug,
+			foundModel.id_topology
+		);
+		//flatten tree
+		const flattenTopologyTree = additionalFunctions.flatten(
+			topologyTree,
+			"children"
+		);
+
+		//filter only Beacon Elements
+		const filteredFlatTopTree = flattenTopologyTree.filter(
+			(element) =>
+				element.type === "GeometryObject" &&
+				element.name.toLowerCase().includes("beacon")
+		);
+
+		if (!filteredFlatTopTree.length > 0) {
+			const error = new Error(
+				"Model Does not contains any Beacon Object modeled with type GeometryObject, Beacons must have 'beacon' it its name."
+			);
+			error.status = 500;
+		}
+
+		//for Each Beacon, obtain its coordinates
+		//run in parallel requests
+		const beaconsGeometricDataPromises = filteredFlatTopTree.map(
+			(beaconBasicData) =>
+				bimPlusServices.getObjectTreeWithPropertyList(
+					bimPlusAuthToken,
+					project.slug,
+					beaconBasicData.id
+				)
+		);
+		const beaconsGeometricData = await Promise.all(
+			beaconsGeometricDataPromises
+		);
+
+		// combine Beacon Data
+		const beacons = [];
+		for (let index = 0; index < beaconsGeometricData.length; index++) {
+			const beaconGData = beaconsGeometricData[index]; // geometric Beacon Data
+			const beaconBData = filteredFlatTopTree[index]; //basic Beacon Data
+			beacons.push({
+				_id: beaconGData.objects[0].id,
+				name:beaconBData.name,
+				location: {
+					x: beaconGData.viewbox.x,
+					y: beaconGData.viewbox.y,
+					z: beaconGData.viewbox.z,
+				},
+			});
+		}
+	
+		project.beacons_model = new BeaconsModel({ _id: modelId, beacons:beacons });
 		return await project.save();
 	} else {
 		const error = new Error("Model was Not Found");
