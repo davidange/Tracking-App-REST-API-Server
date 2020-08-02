@@ -26,4 +26,31 @@ const getActiveBeacons=async (projectId) =>{
 }
 
 
-module.exports={getBeacons,getActiveBeacons}
+const getBeacon=async(projectId,beaconId)=>{
+	const project=await Project.findById(projectId,{'beacons_model.beacons':1});
+	const beacon=project.beacons_model.beacons.id(beaconId);
+	if(project === null){
+		const error = new Error("Project/Beacon Was not Found");
+		error.statusCode = 404;
+		throw error;
+	}
+	return(beacon);
+}
+
+
+const setBeaconUID=async(projectId,beaconId,beaconUID)=>{
+	const project=await Project.findById(projectId,{'beacons_model.beacons':1});
+	const beacon=project.beacons_model.beacons.id(beaconId);
+	if(project === null){
+		const error = new Error("Project/Beacon Was not Found");
+		error.statusCode = 404;
+		throw error;
+	}
+	beacon.uid_beacon=beaconUID;
+	console.log(beacon)
+	await beacon.save(); //validate Subdocument Beacon
+	await project.save();//save Project Document
+	return beacon
+}
+
+module.exports={getBeacons,getActiveBeacons,getBeacon,setBeaconUID}
