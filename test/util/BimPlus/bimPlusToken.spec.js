@@ -8,7 +8,7 @@ const getBimPlusToken = require("../../../util/BimPlus/getBimPlusToken");
 
 describe("Bimplus Token Getter", () => {
 	it("should return a token if correct data was given", async () => {
-        const tokenData= await getBimPlusToken(
+        const tokenData= await getBimPlusToken.requestAutenticationToken(
             process.env.BIMPLUS_USER,
             process.env.BIMPLUS_PASSWORD,
             process.env.BIMPLUS_APPLICATION_ID
