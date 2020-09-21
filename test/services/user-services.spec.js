@@ -1,4 +1,3 @@
-const sinon = require("sinon");
 const chai = require("chai");
 const chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
@@ -20,7 +19,7 @@ describe("Services: User-Services", () => {
 		await mongoose.connect(
 			process.env.DB_TESTING,
 			{ useUnifiedTopology: true, useNewUrlParser: true },
-			() => console.log("connected to DB!")
+			() =>console.log('') 
 		);
 
 		//create new User
