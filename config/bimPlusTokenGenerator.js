@@ -1,6 +1,9 @@
 const getBimPlusToken = require("../util/BimPlus/getBimPlusToken");
+/*
+	This .js file sets up an interval so that it generates periodically a token to autenticate the app 
+	with the BimPlus API.
+*/
 
-//set Interval to update the BimPlus Token every Hour
 module.exports = function (app) {
 	//get token Data for the first Time
 	setTimeout(async () => {
