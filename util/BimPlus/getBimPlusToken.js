@@ -29,8 +29,8 @@ const requestAutenticationToken = async (email, password, applicationId) => {
     });
     
 	const data = {...response.data};
-	console.log('--------Bimplus Authorization Token:----------')
-	console.log(data);
+	//console.log('--------Bimplus Authorization Token:----------')
+	//console.log(data);
 	return data;
 };
 
