@@ -14,7 +14,6 @@ const modelSchema = new mongoose.Schema({
     id_topology:{
         type: String,
         required: true,
-        unique: true
     },
    
 });
