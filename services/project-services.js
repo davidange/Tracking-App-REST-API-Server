@@ -14,7 +14,7 @@ const beacon = require("../controllers/beacon-info");
 const update = async (bimPlusAuthToken) => {
 	let allProjects = [];
 	const teams = await bimPlusServices.getTeams(bimPlusAuthToken);
-
+	
 	for (team of teams) {
 		const projects = await bimPlusServices.getProjects(
 			bimPlusAuthToken,
@@ -53,7 +53,7 @@ const update = async (bimPlusAuthToken) => {
  */
 const getAll = async () => {
 	let projects = await Project.find({}, { name: 1, slug: 1, team_name: 1 });
-	if (projects === null) {
+	if (projects === null||projects.length===0) {
 		const error = new Error("There are no Projects Registered.");
 		error.statusCode = 404;
 		throw error;
@@ -80,6 +80,11 @@ const get = async (projectId) => {
 
 const getModels = async (projectId) => {
 	const models = await Project.findById(projectId, { models: 1, _id: 0 });
+	if(models===null){
+		const error = new Error("Project with that ID does not exist.");
+		error.statusCode = 404;
+		throw error;
+	}
 	return models.models;
 };
 

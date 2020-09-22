@@ -19,7 +19,7 @@ describe("Services: User-Services", () => {
 		await mongoose.connect(
 			process.env.DB_TESTING,
 			{ useUnifiedTopology: true, useNewUrlParser: true },
-			() =>console.log('') 
+			() => console.log("")
 		);
 
 		//create new User
@@ -57,18 +57,20 @@ describe("Services: User-Services", () => {
 	});
 
 	describe("user-services - register", () => {
-	
-		it("Should create a new User and save it in Database", async () => { 
-            await expect(userServices.register("Johny F","test2@email.com","12344$!F")).to.not.be.rejectedWith(Error);
+		it("Should create a new User and save it in Database", async () => {
+			await expect(
+				userServices.register("Johny F", "test2@email.com", "12344$!F")
+			).to.not.be.rejectedWith(Error);
+			await expect(User.findOne({ email: "test2@email.com" })).to.not.be.null;
 		});
 
 		it("Should throw if user already registered", async () => {
-            await expect(userServices.register(nameUser,emailUser,passwordUser))
-            .to.be.rejectedWith(Error)
-            .and.eventually.have.property("statusCode")
-            .that.equals(400);
-    });
-    });
+			await expect(userServices.register(nameUser, emailUser, passwordUser))
+				.to.be.rejectedWith(Error)
+				.and.eventually.have.property("statusCode")
+				.that.equals(400);
+		});
+	});
 
 	after(async function () {
 		await User.deleteMany({});
