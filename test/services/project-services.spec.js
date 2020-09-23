@@ -6,7 +6,6 @@ const expect = chai.expect;
 const sinon = require("sinon");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const util = require("util");
 dotenv.config();
 
 const Project = require("../../models/project");
