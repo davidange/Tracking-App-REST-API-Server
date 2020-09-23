@@ -14,7 +14,7 @@ const beacon = require("../controllers/beacon-info");
 const update = async (bimPlusAuthToken) => {
 	let allProjects = [];
 	const teams = await bimPlusServices.getTeams(bimPlusAuthToken);
-	
+
 	for (team of teams) {
 		const projects = await bimPlusServices.getProjects(
 			bimPlusAuthToken,
@@ -53,7 +53,7 @@ const update = async (bimPlusAuthToken) => {
  */
 const getAll = async () => {
 	let projects = await Project.find({}, { name: 1, slug: 1, team_name: 1 });
-	if (projects === null||projects.length===0) {
+	if (projects === null || projects.length === 0) {
 		const error = new Error("There are no Projects Registered.");
 		error.statusCode = 404;
 		throw error;
@@ -80,7 +80,7 @@ const get = async (projectId) => {
 
 const getModels = async (projectId) => {
 	const models = await Project.findById(projectId, { models: 1, _id: 0 });
-	if(models===null){
+	if (models === null) {
 		const error = new Error("Project with that ID does not exist.");
 		error.statusCode = 404;
 		throw error;
@@ -97,6 +97,7 @@ const setBeaconsModel = async (projectId, modelId, bimPlusAuthToken) => {
 		error.statusCode = 403;
 		throw error;
 	}
+
 	//validate  that model is a model from the selected project
 	const models = await getModels(projectId);
 	const foundModel = models.find((model) => model._id === modelId);
@@ -125,7 +126,8 @@ const setBeaconsModel = async (projectId, modelId, bimPlusAuthToken) => {
 			const error = new Error(
 				"Model Does not contains any Beacon Object modeled with type GeometryObject, Beacons must have 'beacon' it its name."
 			);
-			error.status = 500;
+			error.statusCode = 500;
+			throw error;
 		}
 
 		//for Each Beacon, obtain its coordinates
@@ -149,7 +151,7 @@ const setBeaconsModel = async (projectId, modelId, bimPlusAuthToken) => {
 			const beaconBData = filteredFlatTopTree[index]; //basic Beacon Data
 			beacons.push({
 				_id: beaconGData.objects[0].id,
-				name:beaconBData.name,
+				name: beaconBData.name,
 				location: {
 					x: beaconGData.viewbox.x,
 					y: beaconGData.viewbox.y,
@@ -157,8 +159,11 @@ const setBeaconsModel = async (projectId, modelId, bimPlusAuthToken) => {
 				},
 			});
 		}
-	
-		project.beacons_model = new BeaconsModel({ _id: modelId, beacons:beacons });
+
+		project.beacons_model = new BeaconsModel({
+			_id: modelId,
+			beacons: beacons,
+		});
 		return await project.save();
 	} else {
 		const error = new Error("Model was Not Found");
