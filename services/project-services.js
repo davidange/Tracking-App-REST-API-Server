@@ -175,7 +175,7 @@ const setBeaconsModel = async (projectId, modelId, bimPlusAuthToken) => {
 const getBeaconsModel = async (projectId) => {
 	const beaconsModel = await Project.findById(projectId);
 	if (beaconsModel === null) {
-		const error = new Error("Beacons Model was Not Found");
+		const error = new Error("Project was Not Found");
 		error.statusCode = 404;
 		throw error;
 	}
