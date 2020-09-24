@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 const Location = require("./location");
 
 const beaconSchema = new mongoose.Schema({
-	_id: String,
-	uid_beacon: {
+	_id: String,// Bimplus
+	uid_beacon: { //beacon 
 		type: String,
 	},
 	name: { type: String, required: true },

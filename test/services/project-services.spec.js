@@ -17,7 +17,7 @@ const bimPlusServices = require("../../services/bim-plus-services");
 describe("Services: Project Services", () => {
 	let token;
 
-	//create User for Testing and get Token from Bimplus
+	//Get Token from Bimplus
 	before(async function () {
 		await mongoose.connect(
 			process.env.DB_TESTING,

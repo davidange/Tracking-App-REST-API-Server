@@ -1,9 +1,8 @@
 const Project = require("../models/project");
-const Model = require("../models/model/model");
 const BeaconsModel = require("../models/model/beacons-model");
 const bimPlusServices = require("./bim-plus-services");
 const additionalFunctions = require("./additional-functions");
-const beacon = require("../controllers/beacon-info");
+
 
 /**
  * Updates the list of Projects in the Database
@@ -78,6 +77,12 @@ const get = async (projectId) => {
 	return project;
 };
 
+
+/**
+ * 
+ * @param {String} projectId 
+ * @returns {JSON} list of models
+ */
 const getModels = async (projectId) => {
 	const models = await Project.findById(projectId, { models: 1, _id: 0 });
 	if (models === null) {
@@ -88,6 +93,12 @@ const getModels = async (projectId) => {
 	return models.models;
 };
 
+/**
+ * 
+ * @param {String} projectId 
+ * @param {String} modelId 
+ * @param {String} bimPlusAuthToken 
+ */
 const setBeaconsModel = async (projectId, modelId, bimPlusAuthToken) => {
 	const project = await get(projectId);
 	if (project.beacons_model !== null && project.beacons_model !== undefined) {
@@ -172,6 +183,11 @@ const setBeaconsModel = async (projectId, modelId, bimPlusAuthToken) => {
 	}
 };
 
+/**
+ * 
+ * @param {String} projectId 
+ * @returns beacons Model
+ */
 const getBeaconsModel = async (projectId) => {
 	const beaconsModel = await Project.findById(projectId);
 	if (beaconsModel === null) {
@@ -187,6 +203,10 @@ const getBeaconsModel = async (projectId) => {
 	};
 };
 
+/**
+ * 
+ * @param {String} projectId 
+ */
 const deleteBeaconsModel = async (projectId) => {
 	const project = await get(projectId);
 	project.beacons_model = undefined;
