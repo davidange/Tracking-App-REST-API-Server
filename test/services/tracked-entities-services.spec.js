@@ -125,7 +125,7 @@ describe("Services: Tracked Entities Services", () => {
 				const trackedUser = await TrackedEntitiesServices.getTrackedUser(
 					"5f1aaba0b8ee114a141cd0db"
 				);
-				
+
 				expect(trackedUser).to.have.property("location");
 				expect(trackedUser).to.have.property("date");
 			});
@@ -229,17 +229,45 @@ describe("Services: Tracked Entities Services", () => {
 					.and.eventually.have.property("statusCode")
 					.that.equals(403);
 			});
-			it("should trackedItem the Tracking data information of the Item", async () => {
+			it("should return the Tracking data information of the Item", async () => {
 				const trackedItem = await TrackedEntitiesServices.getTrackedItem(
 					"12345678"
 				);
-				
+
 				expect(trackedItem).to.have.property("location");
 				expect(trackedItem).to.have.property("date");
 				expect(trackedItem).to.have.property(
 					"description",
 					"itemDescriptionNew"
 				);
+			});
+		});
+		describe("getTrackedItems()", async () => {
+			before(async () => {
+				await TrackedItem.deleteMany({});
+			});
+			it("should throw if there are no Tracked Items", async () => {
+				await expect(TrackedEntitiesServices.getTrackedItems())
+					.to.be.rejectedWith(Error)
+					.and.eventually.have.property("statusCode")
+					.that.equals(404);
+			});
+
+			it("should return the list of Tracked Items", async () => {
+				await TrackedEntitiesServices.putTrackedItem(
+					"5f1aaba0b8ee114a141cd0db",
+					"12345678",
+					"TestItemNewName",
+					"itemDescriptionNew",
+					{
+						x: 0,
+						y: 1,
+						z: 3,
+					}
+				);
+				expect(await trackedEntitiesServices.getTrackedItems())
+					.to.be.array()
+					.with.length(1);
 			});
 		});
 	});
