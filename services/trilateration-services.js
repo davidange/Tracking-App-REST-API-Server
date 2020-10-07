@@ -1,8 +1,8 @@
-const { point, circle } = require("@flatten-js/core");
+const { point, segment, circle, vector, matrix } = require("@flatten-js/core");
 /**
  * Calculates the location based on a list of measurements where
  * each item of the list is the distance measured to the beacon and its components
- * Note: as of Right now it Is implemented for a 2D trilateration (hence, component z is disregarded to simplify implementation)
+ * Note: It is implemented as a 2D trilateration (hence, component z is disregarded to simplify implementation)
  *
  * Reference:
  * Cantón Paterna, V.;
@@ -13,16 +13,16 @@ const { point, circle } = require("@flatten-js/core");
  * Sensors 2017, 17, 2927.
  * https://doi.org/10.3390/s17122927
  */
-const weightedMultilateration = (listOfMeasurements) => {
+const weightedTrilateration = (listOfMeasurements) => {
 	if (listOfMeasurements.length < 3) {
 		throw new Error("Number of measurements too low.");
 	}
-	//sort by closest and get only 3 closest elements
+	//sort by closest and get only 3 closest measuements
 	sortedListOfMeasurements = listOfMeasurements
 		.sort((a, b) => (a.radius > b.radius ? 1 : -1))
 		.slice(0, 3);
 
-	//create list of circles
+	//create list of circles that represents the measurements
 	listOfCircles = sortedListOfMeasurements.map((measurement) =>
 		circle(point(measurement.x, measurement.y), measurement.radius)
 	);
@@ -53,7 +53,6 @@ const weightedMultilateration = (listOfMeasurements) => {
 		}
 	}
 
-
 	//calculate the List distances from the intersection point of two circles to the center of the third one
 	let distancesToIPsList = [];
 	for (i = 0; i < listOfCircles.length; i++) {
@@ -68,25 +67,49 @@ const weightedMultilateration = (listOfMeasurements) => {
 		);
 	}
 
-	//Obtain the points in the intersection area
-	const centerPoints = distancesToIPsList.map((distancesToIPs) => {
+	//Obtain the centerPoints in the intersection area
+	//(Area where it is more probable for the tracked item to be located at) and the distance to the center of the other Circle
+	//{distance,segment}
+	const centerPointsDistances = distancesToIPsList.map((distancesToIPs) => {
 		return distancesToIPs.reduce((prev, curr) => {
 			return prev[0] < curr[0] ? prev : curr;
 		});
 	});
 
-	//obtain midpoint from centerPoints
+	//obtain midpoint from the points obtained previously.
 
 	const midPoint = point(
-        // midPoint X
-		centerPoints.reduce((prev, curr) => (prev = prev + curr[1].ps.x), 0) /
-            centerPoints.length,
-        // midPoint Y
-		centerPoints.reduce((prev, curr) => (prev = prev + curr[1].ps.y), 0) /
-			centerPoints.length
+		// midPoint X
+		centerPointsDistances.reduce(
+			(prev, curr) => (prev = prev + curr[1].ps.x),
+			0
+		) / centerPointsDistances.length,
+
+		// midPoint Y
+		centerPointsDistances.reduce(
+			(prev, curr) => (prev = prev + curr[1].ps.y),
+			0
+		) / centerPointsDistances.length
 	);
 
-	console.log(midPoint);
+	//line interconnecting midPoint to centerPoint from the intersection of the two smallest circles.
+	//line will be scaled to represent the effect fo the weighting factor
+	const line = segment(midPoint, centerPointsDistances[0][1].ps);
+
+	//scaling matrices
+	const translatingMatrix = matrix().translate(-midPoint.x, -midPoint.y); //translates to origin
+	const scalingMatrix = matrix().scale(1 - weigths[0][2], 1 - weigths[0][2]); //scales line
+	const translatingMatrix2 = matrix().translate(midPoint.x, midPoint.y); //translates back to original location
+
+	const scaledLine = line
+		.transform(translatingMatrix)
+		.transform(scalingMatrix)
+		.transform(translatingMatrix2);
+
+	const locationPoint = scaledLine.end.toJSON();
+	delete locationPoint.name;
+    return locationPoint;
+   
 };
 
-module.exports = { weightedMultilateration };
+module.exports = { weightedTrilateration };
