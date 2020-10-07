@@ -110,7 +110,7 @@ const getObjectTree=async(access_token, slug,objectTopologyId)=>{
 		}
 	);
 	let modelTree = response.data;
-	//convert to JSOn if response is in string
+	//convert to JSON if response is in string
 	if(typeof(modelTree)==='string'){
 		modelTree=JSON.parse(modelTree.trim())
 	}

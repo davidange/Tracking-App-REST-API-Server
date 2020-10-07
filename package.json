@@ -19,6 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@flatten-js/core": "^1.2.15",
     "axios": "^0.19.2",
     "bcryptjs": "^2.4.3",
     "chai-arrays": "^2.2.0",
