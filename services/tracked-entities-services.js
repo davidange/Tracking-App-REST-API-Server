@@ -4,6 +4,12 @@ const TrackedUser = require("../models/trackedEntities/tracked-user");
 const User = require("../models/user");
 
 /**
+ * This Service is for Storing/getting the Location of a tracked Entity
+ */
+
+
+
+/**
  * Saves/updates the location of the tracked User
  * @param {String} userId
  * @param {JSON} location
