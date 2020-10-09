@@ -2,6 +2,8 @@ const chai = require("chai");
 const chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 const expect = chai.expect;
+const chaiArrays = require("chai-arrays");
+chai.use(chaiArrays);
 
 const sinon = require("sinon");
 const mongoose = require("mongoose");
@@ -44,6 +46,13 @@ describe("Services: Project Services", () => {
 						uid_beacon: "12345678",
 						name: "beacon1",
 						location: { x: 0, y: 1, z: 2 },
+					},
+					{
+						is_active: true,
+						_id: "000000001",
+						uid_beacon: "12345677",
+						name: "beacon1",
+						location: { x: 0, y: 1, z: 3 },
 					},
 					{
 						is_active: false,
@@ -115,79 +124,117 @@ describe("Services: Project Services", () => {
 		it("should return only the activeBeacons", async () => {
 			const activeBeacons = await beaconsInfoServices.getActiveBeacons(
 				"123456"
-            );
-            expect(activeBeacons).to.be.array();
-            expect(activeBeacons).to.be.length(1)
+			);
+			expect(activeBeacons).to.be.array();
+			expect(activeBeacons).to.be.length(2);
 		});
-    });
-    
-    describe("getBeacon(...)", () => {
-		it("should throw if the project id is the wrong one ", async () => {
-			await expect(beaconsInfoServices.getBeacon("111111","000000001"))
-				.to.be.rejectedWith(Error)
-				.and.eventually.have.property("statusCode")
-				.that.equals(404);
-		});
-		it("should throw if the beacon_id is not in beacons_model", async () => {
-			await expect(beaconsInfoServices.getBeacon("123456","000000008"))
-				.to.be.rejectedWith(Error)
-				.and.eventually.have.property("statusCode")
-				.that.equals(404);
-        });
-        it("should return the Beacon info",async()=>{
-            const beacon=await beaconsInfoServices.getBeacon("123456","000000001");
-            expect(beacon).to.have.property("name","beacon1")
-        })
-		
-    });
-    
-    describe('setBeaconUID(...)',()=>{
-        it("should throw if the project id is the wrong one ", async () => {
-			await expect(beaconsInfoServices.setBeaconUID("111111","000000001","1234564"))
-				.to.be.rejectedWith(Error)
-				.and.eventually.have.property("statusCode")
-				.that.equals(404);
-		});
-		it("should throw if the beacon_id is not in beacons_model", async () => {
-			await expect(beaconsInfoServices.setBeaconUID("123456","000000008","1234564"))
-				.to.be.rejectedWith(Error)
-				.and.eventually.have.property("statusCode")
-				.that.equals(404);
-        });
+	});
 
-        it("should throw if another beacon has the desired Beacon UID", async () => {
-			await expect(beaconsInfoServices.setBeaconUID("123456","000000002","12345678"))
+	describe("getBeacon(...)", () => {
+		it("should throw if the project id is the wrong one ", async () => {
+			await expect(beaconsInfoServices.getBeacon("111111", "000000001"))
+				.to.be.rejectedWith(Error)
+				.and.eventually.have.property("statusCode")
+				.that.equals(404);
+		});
+		it("should throw if the beacon_id is not in beacons_model", async () => {
+			await expect(beaconsInfoServices.getBeacon("123456", "000000008"))
+				.to.be.rejectedWith(Error)
+				.and.eventually.have.property("statusCode")
+				.that.equals(404);
+		});
+		it("should return the Beacon info", async () => {
+			const beacon = await beaconsInfoServices.getBeacon("123456", "000000001");
+			expect(beacon).to.have.property("name", "beacon1");
+		});
+	});
+	describe("getBeaconsLocation(...)", () => {
+		it("should throw if the project id is the wrong one ", async () => {
+			await expect(beaconsInfoServices.getBeaconsLocation("111111", "12345678"))
+				.to.be.rejectedWith(Error)
+				.and.eventually.have.property("statusCode")
+				.that.equals(404);
+		});
+		it("should throw if a beacon was not found ", async () => {
+			await expect(
+				beaconsInfoServices.getBeaconsLocation("123456", ["123456710"])
+			)
+				.to.be.rejectedWith(Error)
+				.and.eventually.have.property("statusCode")
+				.that.equals(404);
+		});
+		it("should return the list of Beacons Location", async () => {
+			const beaconsLocation = await beaconsInfoServices.getBeaconsLocation(
+				"123456",
+				["12345678", "12345677"]
+			);
+			expect(beaconsLocation).to.be.array().and.to.have.lengthOf(2);
+			expect(beaconsLocation[0]).to.have.property("x", 0);
+			expect(beaconsLocation[0]).to.have.property("y", 1);
+			expect(beaconsLocation[0]).to.have.property("z", 2);
+		});
+	});
+
+	describe("setBeaconUID(...)", () => {
+		it("should throw if the project id is the wrong one ", async () => {
+			await expect(
+				beaconsInfoServices.setBeaconUID("111111", "000000001", "1234564")
+			)
+				.to.be.rejectedWith(Error)
+				.and.eventually.have.property("statusCode")
+				.that.equals(404);
+		});
+		it("should throw if the beacon_id is not in beacons_model", async () => {
+			await expect(
+				beaconsInfoServices.setBeaconUID("123456", "000000008", "1234564")
+			)
+				.to.be.rejectedWith(Error)
+				.and.eventually.have.property("statusCode")
+				.that.equals(404);
+		});
+
+		it("should throw if another beacon has the desired Beacon UID", async () => {
+			await expect(
+				beaconsInfoServices.setBeaconUID("123456", "000000002", "12345678")
+			)
 				.to.be.rejectedWith(Error)
 				.and.eventually.have.property("statusCode")
 				.that.equals(403);
-        });
-        it("should return the beacon info if the update was successful",async ()=>{
-            const beacon=await beaconsInfoServices.setBeaconUID("123456","000000001","UIDBEACON");
-            expect(beacon).to.have.property("name","beacon1")
-            expect(beacon).to.have.property("is_active",true)
-        })
-    })
+		});
+		it("should return the beacon info if the update was successful", async () => {
+			const beacon = await beaconsInfoServices.setBeaconUID(
+				"123456",
+				"000000001",
+				"UIDBEACON"
+			);
+			expect(beacon).to.have.property("name", "beacon1");
+			expect(beacon).to.have.property("is_active", true);
+		});
+	});
 
-    describe('deleteBeaconUID(...)',()=>{
-        it("should throw if the project id is the wrong one ", async () => {
-			await expect(beaconsInfoServices.deleteBeaconUID("111111","000000001"))
+	describe("deleteBeaconUID(...)", () => {
+		it("should throw if the project id is the wrong one ", async () => {
+			await expect(beaconsInfoServices.deleteBeaconUID("111111", "000000001"))
 				.to.be.rejectedWith(Error)
 				.and.eventually.have.property("statusCode")
 				.that.equals(404);
 		});
 		it("should throw if the beacon_id is not in beacons_model", async () => {
-			await expect(beaconsInfoServices.deleteBeaconUID("123456","000000008"))
+			await expect(beaconsInfoServices.deleteBeaconUID("123456", "000000008"))
 				.to.be.rejectedWith(Error)
 				.and.eventually.have.property("statusCode")
 				.that.equals(404);
-        });
+		});
 
-        it("should return the beacon info updated if the deletion of the UID was successful",async ()=>{
-            const beacon=await beaconsInfoServices.deleteBeaconUID("123456","000000001");
-            expect(beacon).to.have.property("name","beacon1")
-            expect(beacon).to.have.property("is_active",false)
-        })
-    })
+		it("should return the beacon info updated if the deletion of the UID was successful", async () => {
+			const beacon = await beaconsInfoServices.deleteBeaconUID(
+				"123456",
+				"000000001"
+			);
+			expect(beacon).to.have.property("name", "beacon1");
+			expect(beacon).to.have.property("is_active", false);
+		});
+	});
 
 	after(async () => {
 		await Project.deleteMany({});

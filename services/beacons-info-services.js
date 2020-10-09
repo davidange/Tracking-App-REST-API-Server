@@ -49,6 +49,32 @@ const getBeacon = async (projectId, beaconId) => {
 	return beacon;
 };
 
+const getBeaconsLocation = async (projectId, beaconsUid) => {
+	const project = await Project.findById(projectId, {
+		"beacons_model.beacons": 1,
+	});
+	if (project === null) {
+		const error = new Error("Project Was not Found");
+		error.statusCode = 404;
+		throw error;
+	}
+
+	const locations = [];
+	const beacons = project.beacons_model.beacons;
+
+	for (let beaconUid of beaconsUid) {
+		let beacon = beacons.find((beacon) => beacon.uid_beacon === beaconUid);
+		if (beacon === undefined ||beacon===null) {
+			const error = new Error("A Beacon UID  Is not found Found");
+			error.statusCode = 404;
+			throw error;
+		}
+		locations.push(beacon.location)
+	}
+
+	return locations;
+};
+
 const setBeaconUID = async (projectId, beaconId, beaconUID) => {
 	const project = await Project.findById(projectId, {
 		"beacons_model.beacons": 1,
@@ -86,13 +112,12 @@ const setBeaconUID = async (projectId, beaconId, beaconUID) => {
 	beacon.uid_beacon = beaconUID;
 	beacon.is_active = true;
 
-	await beacon.save({suppressWarning:true}); //validate Subdocument Beacon
+	await beacon.save({ suppressWarning: true }); //validate Subdocument Beacon
 	await project.save(); //save Project Document
 	return beacon;
 };
 
-
-const deleteBeaconUID = async (projectId, beaconId)=>{
+const deleteBeaconUID = async (projectId, beaconId) => {
 	const project = await Project.findById(projectId, {
 		"beacons_model.beacons": 1,
 	});
@@ -109,12 +134,18 @@ const deleteBeaconUID = async (projectId, beaconId)=>{
 		throw error;
 	}
 
-	beacon.uid_beacon=undefined;
+	beacon.uid_beacon = undefined;
 	beacon.is_active = false;
-	await beacon.save({suppressWarning:true}); //validate Subdocument Beacon
+	await beacon.save({ suppressWarning: true }); //validate Subdocument Beacon
 	await project.save(); //save Project Document
 	return beacon;
+};
 
-}
-
-module.exports = { getBeacons, getActiveBeacons, getBeacon, setBeaconUID ,deleteBeaconUID};
+module.exports = {
+	getBeacons,
+	getActiveBeacons,
+	getBeacon,
+	getBeaconsLocation,
+	setBeaconUID,
+	deleteBeaconUID,
+};
