@@ -3,6 +3,7 @@ const TrackedItem = require("../models/trackedEntities/tracked-item");
 const TrackedUser = require("../models/trackedEntities/tracked-user");
 const User = require("../models/user");
 
+
 /**
  * This Service is for Storing/getting the Location of a tracked Entity
  */
@@ -23,6 +24,7 @@ const putTrackedUser = async (userId, location) => {
 		throw error;
 	}
 	let trackedUser = await TrackedUser.findOne({ user: user._id });
+
 	//first Time
 	if (trackedUser === null) {
 		trackedUser = new TrackedUser({ location: location, user: user });
