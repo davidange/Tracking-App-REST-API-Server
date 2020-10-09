@@ -6,6 +6,11 @@ const trilaterationServices = require("./trilateration-services");
  * 
  */
 
+/**
+ * Estimates the Data based on the Location method Selected
+ * @param {JSON} data 
+ * @param {String} locationMethod 
+ */
 const estimateLocation = (data, locationMethod) => {
 	if ("beacon-trilateration".localeCompare(locationMethod)) {
 		return trilaterationServices.weightedTrilateration(data);

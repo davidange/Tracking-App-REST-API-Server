@@ -1,33 +1,52 @@
-const TrackedEntity = require("../models/trackedEntities/tracked-entity");
 const TrackedItem = require("../models/trackedEntities/tracked-item");
 const TrackedUser = require("../models/trackedEntities/tracked-user");
 const User = require("../models/user");
-
+const Project = require("../models/project");
 
 /**
  * This Service is for Storing/getting the Location of a tracked Entity
  */
 
-
-
 /**
  * Saves/updates the location of the tracked User
  * @param {String} userId
+ * @param {String} projectId
  * @param {JSON} location
  * @returns the updated TrackedUser Item
  */
-const putTrackedUser = async (userId, location) => {
-	const user = await User.findById(userId);
+const putTrackedUser = async (userId, projectId, location) => {
+	//Parallel run of calls to DB
+	const responses = await Promise.all([
+		User.findById(userId),
+		Project.findById(projectId),
+	]);
+	const user = responses[0];
+	const project = responses[1];
+
 	if (user === null) {
 		const error = new Error("User was not Found");
-		error.statusCode = 403;
+		error.statusCode = 404;
 		throw error;
 	}
-	let trackedUser = await TrackedUser.findOne({ user: user._id });
+
+	if (project === null) {
+		const error = new Error("Project was not Found");
+		error.statusCode = 404;
+		throw error;
+	}
+
+	let trackedUser = await TrackedUser.findOne({
+		user: user._id,
+		project_ref: project._id,
+	});
 
 	//first Time
 	if (trackedUser === null) {
-		trackedUser = new TrackedUser({ location: location, user: user });
+		trackedUser = new TrackedUser({
+			location: location,
+			user: user,
+			project_ref: project._id,
+		});
 	} else {
 		//update Tracked User
 
@@ -46,43 +65,71 @@ const putTrackedUser = async (userId, location) => {
 /**
  * Gets the Tracked User
  * @param {String} userId
+ * @param {String} projectId
  * @returns the Tracked User
  */
-const getTrackedUser = async (userId) => {
-	const user = await User.findById(userId);
+const getTrackedUser = async (userId, projectId) => {
+	//Parallel run of calls to DB
+	const responses = await Promise.all([
+		User.findById(userId),
+		Project.findById(projectId),
+	]);
+	const user = responses[0];
+	const project = responses[1];
+
 	if (user === null) {
 		const error = new Error("User was not Found");
 		error.statusCode = 404;
 		throw error;
 	}
-	let trackedUser = await TrackedUser.findOne({ user: user._id }).populate('user',['email','name']);
+
+	if (project === null) {
+		const error = new Error("Project was not Found");
+		error.statusCode = 404;
+		throw error;
+	}
+
+	let trackedUser = await TrackedUser.findOne({
+		user: user._id,
+		project_ref: project._id,
+	}).populate("user", ["email", "name"]);
 
 	if (trackedUser === null) {
 		const error = new Error(
 			"There is no information about the tracking of the User"
 		);
-		error.statusCode = 403;
+		error.statusCode = 404;
 		throw error;
 	}
 	return trackedUser;
 };
 
 /**
- * get the list of all the tracked Users
+ * get the list of all the tracked Users for current Project
+ * @param projectId
  */
-const getTrackedUsers = async () => {
-	let trackedUsers = await TrackedUser.find({}).populate('user',['email','name']);
+const getTrackedUsers = async (projectId) => {
+	const project = await Project.findById(projectId);
+	if (project === null) {
+		const error = new Error("Project was not Found");
+		error.statusCode = 404;
+		throw error;
+	}
+	let trackedUsers = await TrackedUser.find({
+		project_ref: project._id,
+	}).populate("user", ["email", "name"]);
 	if (trackedUsers === null || trackedUsers.length === 0) {
 		const error = new Error("There are no tracked Users.");
 		error.statusCode = 404;
 		throw error;
-    }
+	}
 	return trackedUsers;
 };
 
 /**
  * Saves/updates the location of a tracked Item
  * @param {String} userId
+ * @param {String} projectId
  * @param {String} itemId
  * @param {String} itemName
  * @param {String} itemDescription
@@ -90,18 +137,36 @@ const getTrackedUsers = async () => {
  */
 const putTrackedItem = async (
 	userId,
+	projectId,
 	itemId,
 	itemName,
 	itemDescription,
 	location
 ) => {
-	const user = await User.findById(userId);
+	//Parallel run of calls to DB
+	const responses = await Promise.all([
+		User.findById(userId),
+		Project.findById(projectId),
+	]);
+	const user = responses[0];
+	const project = responses[1];
+
 	if (user === null) {
 		const error = new Error("User was not Found");
-		error.statusCode = 403;
+		error.statusCode = 404;
 		throw error;
 	}
-	let trackedItem = await TrackedItem.findOne({ item_id: itemId });
+
+	if (project === null) {
+		const error = new Error("Project was not Found");
+		error.statusCode = 404;
+		throw error;
+	}
+
+	let trackedItem = await TrackedItem.findOne({
+		item_id: itemId,
+		project_ref: project._id,
+	});
 	//first Time
 	if (trackedItem === null) {
 		trackedItem = new TrackedItem({
@@ -111,6 +176,7 @@ const putTrackedItem = async (
 			description: itemDescription,
 			item_id: itemId,
 			last_updated_by: user,
+			project_ref: project._id,
 		});
 	} else {
 		//update Tracked Item
@@ -132,16 +198,28 @@ const putTrackedItem = async (
 /**
  * Gets the Tracked Item
  * @param {String} itemId
+ * @param {String} projectId
  * @returns the Tracked User
  */
-const getTrackedItem = async (itemId) => {
-	let trackedItem = await TrackedItem.findOne({ item_id: itemId }).populate('last_updated_by',['email','name']).populate('posted_by',['email','name']);
+const getTrackedItem = async (itemId, projectId) => {
+	const project = await Project.findById(projectId);
+	if (project === null) {
+		const error = new Error("Project was not Found");
+		error.statusCode = 404;
+		throw error;
+	}
+	let trackedItem = await TrackedItem.findOne({
+		item_id: itemId,
+		project_ref: project._id,
+	})
+		.populate("last_updated_by", ["email", "name"])
+		.populate("posted_by", ["email", "name"]);
 
 	if (trackedItem === null) {
 		const error = new Error(
 			"There is no tracking information about the desired Item"
 		);
-		error.statusCode = 403;
+		error.statusCode = 404;
 		throw error;
 	}
 
@@ -149,16 +227,24 @@ const getTrackedItem = async (itemId) => {
 };
 
 /**
- * get the list of all the tracked Users
+ * get the list of all the tracked Users for selected Project
  */
-const getTrackedItems = async () => {
-	let trackedItems = await TrackedItem.find({}).populate('last_updated_by',['email','name']).populate('posted_by',['email','name']);
+const getTrackedItems = async (projectId) => {
+	const project = await Project.findById(projectId);
+	if (project === null) {
+		const error = new Error("Project was not Found");
+		error.statusCode = 404;
+		throw error;
+	}
+	let trackedItems = await TrackedItem.find({ project_ref: project._id })
+		.populate("last_updated_by", ["email", "name"])
+		.populate("posted_by", ["email", "name"]);
 	if (trackedItems === null || trackedItems.length === 0) {
 		const error = new Error("There are no tracked Items.");
 		error.statusCode = 404;
 		throw error;
-    }
-    
+	}
+
 	return trackedItems;
 };
 

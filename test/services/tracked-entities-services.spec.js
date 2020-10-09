@@ -11,6 +11,7 @@ const bcrypt = require("bcryptjs");
 dotenv.config();
 
 const User = require("../../models/user");
+const Project = require("../../models/project");
 const TrackedEntity = require("../../models/trackedEntities/tracked-entity");
 const TrackedUser = require("../../models/trackedEntities/tracked-user");
 
@@ -19,10 +20,15 @@ const trackedEntitiesServices = require("../../services/tracked-entities-service
 const TrackedItem = require("../../models/trackedEntities/tracked-item");
 
 describe("Services: Tracked Entities Services", () => {
-	//create User for Testing
+	//create User for Testing and Create Project for Testing
 	const emailUser = "test@test.com";
 	const nameUser = "testingName";
 	const passwordUser = "123fdaR";
+
+	const projectSlug = "1234";
+	const projectName = "testProject";
+	const projectId = "5f3aaba0b8ee114a141cd0da";
+
 	before(async function () {
 		await mongoose.connect(
 			process.env.DB_TESTING,
@@ -31,6 +37,7 @@ describe("Services: Tracked Entities Services", () => {
 		);
 		//clean Databases for User and Tracked Entities
 		await User.deleteMany({});
+		await Project.deleteMany({});
 		await TrackedEntity.deleteMany({});
 		await TrackedUser.deleteMany({});
 		//create new User
@@ -46,28 +53,55 @@ describe("Services: Tracked Entities Services", () => {
 			_id: "5f1aaba0b8ee114a141cd0db",
 		});
 
-		await user.save();
+		const project = new Project({
+			name: projectName,
+			slug: projectSlug,
+			_id: projectId,
+		});
+
+		await Promise.all([user.save(), project.save()]);
 	});
 
 	describe("TrackedUsers", () => {
 		describe("putTrackedUser(...)", () => {
 			it("should throw if userId is of a not existant User", async () => {
 				await expect(
-					TrackedEntitiesServices.putTrackedUser("5f1aaba0b8ee114a141cd0da", {
-						x: 0,
-						y: 1,
-						z: 2,
-					})
+					TrackedEntitiesServices.putTrackedUser(
+						"5f1aaba0b8ee114a141cd0da",
+						projectId,
+						{
+							x: 0,
+							y: 1,
+							z: 2,
+						}
+					)
 				)
 					.to.be.rejectedWith(Error)
 					.and.eventually.have.property("statusCode")
-					.that.equals(403);
+					.that.equals(404);
+			});
+			it("should throw if projectId is of a not existant Project", async () => {
+				await expect(
+					TrackedEntitiesServices.putTrackedUser(
+						"5f1aaba0b8ee114a141cd0db",
+						"5f3aaba0b8ee114a141cd0dd",
+						{
+							x: 0,
+							y: 1,
+							z: 2,
+						}
+					)
+				)
+					.to.be.rejectedWith(Error)
+					.and.eventually.have.property("statusCode")
+					.that.equals(404);
 			});
 
 			it("should create a new TrackedUser once the call to the function has been made", async () => {
 				const numOfTrackedUsers = await TrackedUser.estimatedDocumentCount();
 				const trackedUser = await TrackedEntitiesServices.putTrackedUser(
 					"5f1aaba0b8ee114a141cd0db",
+					projectId,
 					{ x: 0, y: 1, z: 2 }
 				);
 				expect(await TrackedUser.estimatedDocumentCount()).to.be.greaterThan(
@@ -79,6 +113,7 @@ describe("Services: Tracked Entities Services", () => {
 				const numOfTrackedUsers = await TrackedUser.estimatedDocumentCount();
 				const trackedUser = await TrackedEntitiesServices.putTrackedUser(
 					"5f1aaba0b8ee114a141cd0db",
+					projectId,
 					{ x: 0, y: 2, z: 3 }
 				);
 				expect(await TrackedUser.estimatedDocumentCount()).to.equal(
@@ -107,7 +142,10 @@ describe("Services: Tracked Entities Services", () => {
 			});
 			it("should throw if the user is not found", async () => {
 				await expect(
-					TrackedEntitiesServices.getTrackedUser("5f1aaba0b8ee114a141cd0da")
+					TrackedEntitiesServices.getTrackedUser(
+						"5f1aaba0b8ee114a141cd0da",
+						projectId
+					)
 				)
 					.to.be.rejectedWith(Error)
 					.and.eventually.have.property("statusCode")
@@ -115,15 +153,19 @@ describe("Services: Tracked Entities Services", () => {
 			});
 			it("should throw if the user does not has Tracking Data", async () => {
 				await expect(
-					TrackedEntitiesServices.getTrackedUser("5f1aaba0b8ee114a141cd0dc")
+					TrackedEntitiesServices.getTrackedUser(
+						"5f1aaba0b8ee114a141cd0dc",
+						projectId
+					)
 				)
 					.to.be.rejectedWith(Error)
 					.and.eventually.have.property("statusCode")
-					.that.equals(403);
+					.that.equals(404);
 			});
 			it("should return the Tracking data information of the user", async () => {
 				const trackedUser = await TrackedEntitiesServices.getTrackedUser(
-					"5f1aaba0b8ee114a141cd0db"
+					"5f1aaba0b8ee114a141cd0db",
+					projectId
 				);
 
 				expect(trackedUser).to.have.property("location");
@@ -135,7 +177,7 @@ describe("Services: Tracked Entities Services", () => {
 				await TrackedUser.deleteMany({});
 			});
 			it("should throw if there are no Tracked Users", async () => {
-				await expect(TrackedEntitiesServices.getTrackedUsers())
+				await expect(TrackedEntitiesServices.getTrackedUsers(projectId))
 					.to.be.rejectedWith(Error)
 					.and.eventually.have.property("statusCode")
 					.that.equals(404);
@@ -144,9 +186,10 @@ describe("Services: Tracked Entities Services", () => {
 			it("should return the list of Tracked Users", async () => {
 				await trackedEntitiesServices.putTrackedUser(
 					"5f1aaba0b8ee114a141cd0db",
+					projectId,
 					{ x: 0, y: 2, z: 3 }
 				);
-				expect(await trackedEntitiesServices.getTrackedUsers())
+				expect(await trackedEntitiesServices.getTrackedUsers(projectId))
 					.to.be.array()
 					.with.length(1);
 			});
@@ -159,6 +202,7 @@ describe("Services: Tracked Entities Services", () => {
 				await expect(
 					TrackedEntitiesServices.putTrackedItem(
 						"5f1aaba0b8ee114a141cd0da",
+						projectId,
 						"12345678",
 						"TestItem",
 						"itemDescription",
@@ -171,13 +215,14 @@ describe("Services: Tracked Entities Services", () => {
 				)
 					.to.be.rejectedWith(Error)
 					.and.eventually.have.property("statusCode")
-					.that.equals(403);
+					.that.equals(404);
 			});
 
 			it("should create a new TrackedItem once the call to the function has been made", async () => {
 				const numOfTrackedItems = await TrackedItem.estimatedDocumentCount();
 				const trackedItem = await TrackedEntitiesServices.putTrackedItem(
 					"5f1aaba0b8ee114a141cd0db",
+					projectId,
 					"12345678",
 					"TestItem",
 					"itemDescription",
@@ -196,6 +241,7 @@ describe("Services: Tracked Entities Services", () => {
 				const numOfTrackedItems = await TrackedItem.estimatedDocumentCount();
 				const trackedItem = await TrackedEntitiesServices.putTrackedItem(
 					"5f1aaba0b8ee114a141cd0db",
+					projectId,
 					"12345678",
 					"TestItemNewName",
 					"itemDescriptionNew",
@@ -223,15 +269,19 @@ describe("Services: Tracked Entities Services", () => {
 		describe("getTrackedItem(...)", async () => {
 			it("should throw if the item is not being tracked", async () => {
 				await expect(
-					TrackedEntitiesServices.getTrackedItem("5f1aaba0b8ee114a141cd0dc")
+					TrackedEntitiesServices.getTrackedItem(
+						"5f1aaba0b8ee114a141cd0dc",
+						projectId
+					)
 				)
 					.to.be.rejectedWith(Error)
 					.and.eventually.have.property("statusCode")
-					.that.equals(403);
+					.that.equals(404);
 			});
 			it("should return the Tracking data information of the Item", async () => {
 				const trackedItem = await TrackedEntitiesServices.getTrackedItem(
-					"12345678"
+					"12345678",
+					projectId
 				);
 
 				expect(trackedItem).to.have.property("location");
@@ -247,7 +297,7 @@ describe("Services: Tracked Entities Services", () => {
 				await TrackedItem.deleteMany({});
 			});
 			it("should throw if there are no Tracked Items", async () => {
-				await expect(TrackedEntitiesServices.getTrackedItems())
+				await expect(TrackedEntitiesServices.getTrackedItems(projectId))
 					.to.be.rejectedWith(Error)
 					.and.eventually.have.property("statusCode")
 					.that.equals(404);
@@ -256,6 +306,7 @@ describe("Services: Tracked Entities Services", () => {
 			it("should return the list of Tracked Items", async () => {
 				await TrackedEntitiesServices.putTrackedItem(
 					"5f1aaba0b8ee114a141cd0db",
+					projectId,
 					"12345678",
 					"TestItemNewName",
 					"itemDescriptionNew",
@@ -265,7 +316,7 @@ describe("Services: Tracked Entities Services", () => {
 						z: 3,
 					}
 				);
-				expect(await trackedEntitiesServices.getTrackedItems())
+				expect(await trackedEntitiesServices.getTrackedItems(projectId))
 					.to.be.array()
 					.with.length(1);
 			});
