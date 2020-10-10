@@ -22,7 +22,9 @@ const weightedTrilateration = (listOfMeasurements) => {
 	sortedListOfMeasurements = listOfMeasurements
 		.sort((a, b) => (a.radius > b.radius ? 1 : -1))
 		.slice(0, 3);
-
+	if(listOfMeasurements[0].radius<=0){
+		throw new Error("Negative measurements are not possible");
+	}
 	//create list of circles that represents the measurements
 	listOfCircles = sortedListOfMeasurements.map((measurement) =>
 		circle(point(measurement.x, measurement.y), measurement.radius)
