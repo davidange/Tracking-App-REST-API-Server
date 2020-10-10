@@ -2,6 +2,8 @@ const chai = require("chai");
 const chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 const expect = chai.expect;
+const chaiArrays = require("chai-arrays");
+chai.use(chaiArrays);
 
 const sinon = require("sinon");
 const mongoose = require("mongoose");
@@ -289,21 +291,18 @@ describe("Services: Project Services", () => {
 					_id: "000001",
 				},
 			});
-			await project.save()
+			await project.save();
 		});
-		it("should throw an error if the inputed Project is not found ",async ()=>{
-			await expect(
-				projectServices.getBeaconsModel("1111111")
-			)
+		it("should throw an error if the inputed Project is not found ", async () => {
+			await expect(projectServices.getBeaconsModel("1111111"))
 				.to.be.rejectedWith(Error)
 				.and.eventually.have.property("statusCode")
 				.that.equals(404);
 		});
 
-		it("should successfully retrieve the Model that contains the beacon",async ()=>{
-			const beaconsModel=await projectServices.getBeaconsModel("123456")
-			expect(beaconsModel).to.have.property('_id','000001')
-			
+		it("should successfully retrieve the Model that contains the beacon", async () => {
+			const beaconsModel = await projectServices.getBeaconsModel("123456");
+			expect(beaconsModel).to.have.property("_id", "000001");
 		});
 
 		after(async () => {
@@ -343,20 +342,20 @@ describe("Services: Project Services", () => {
 					_id: "000001",
 				},
 			});
-			await project.save()
+			await project.save();
 		});
-		it('should throw if the projectId is not valid',async()=>{
-			await expect(projectServices.deleteBeaconsModel('111111')).to.be.rejectedWith(Error)
-			.and.eventually.have.property("statusCode")
-			.that.equals(404);
-		})
+		it("should throw if the projectId is not valid", async () => {
+			await expect(projectServices.deleteBeaconsModel("111111"))
+				.to.be.rejectedWith(Error)
+				.and.eventually.have.property("statusCode")
+				.that.equals(404);
+		});
 
-		it('should remove the beacons_model property',async()=>{
-			await projectServices.deleteBeaconsModel('123456');
-			const project= await projectServices.get('123456');
-			expect(project).to.have.property('beacons_model',undefined)
-		})
-
+		it("should remove the beacons_model property", async () => {
+			await projectServices.deleteBeaconsModel("123456");
+			const project = await projectServices.get("123456");
+			expect(project).to.have.property("beacons_model", undefined);
+		});
 
 		after(async () => {
 			await Project.deleteMany({});

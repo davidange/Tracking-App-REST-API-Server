@@ -4,6 +4,7 @@ const { point, segment, circle, vector, matrix } = require("@flatten-js/core");
  * each item of the list is the distance measured to the beacon and its components
  * Note: It is implemented as a 2D trilateration (hence, component z is disregarded to simplify implementation)
  *
+ * @param {String} listOfMeasurements
  * Reference:
  * Cantón Paterna, V.;
  * Calveras Augé, A.;
