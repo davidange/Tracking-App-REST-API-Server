@@ -24,8 +24,13 @@ const estimateLocation =async (projectId,data, locationMethod) => {
 		const beaconsMeasurements=[];
 		locationBeacons.forEach((locationBeacon,i)=>beaconsMeasurements.push({radius:distances[i],x:locationBeacon.x,y:locationBeacon.y}));
 		//TODO ADD TRY CATCH HERE!!!!!!!!
-		//if it fails, add status code
-		return trilaterationServices.weightedTrilateration(beaconsMeasurements);
+		//if it fails, add status code and maybe ask user to use GPS Location now....
+		const estimatedLocation=await trilaterationServices.weightedTrilateration(beaconsMeasurements);
+		//adds the Z value to the estimated Location as it only calculates the location in x,y plane
+		estimatedLocation.z=locationBeacons[0].z;
+		return estimatedLocation;
+
+
 	} else if ("gps-location"==locationMethod) {
 		const error = new Error("Method is still not implemented");
 		error.statusCode = 500;

@@ -110,6 +110,7 @@ describe("Services: Location Estimator Services", () => {
 			);
 			expect(estimatedLocation).to.have.property("x", 0);
 			expect(estimatedLocation).to.have.property("y", 0);
+			expect(estimatedLocation).to.have.property("z", 0);
 			mock.restore();
 			mock.verify();
 		});
