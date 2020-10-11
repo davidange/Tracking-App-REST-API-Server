@@ -117,7 +117,7 @@ const getTrackedUsers = async (projectId) => {
 	}
 	let trackedUsers = await TrackedUser.find({
 		project_ref: project._id,
-	}).populate("user", ["email", "name"]);
+	}).select({user:1,location:1,_id:0},).populate("user", ["_id","email", "name"]);
 	if (trackedUsers === null || trackedUsers.length === 0) {
 		const error = new Error("There are no tracked Users.");
 		error.statusCode = 404;
@@ -221,8 +221,7 @@ const getTrackedItem = async (itemId, projectId) => {
 	let trackedItem = await TrackedItem.findOne({
 		item_id: itemId,
 		project_ref: project._id,
-	})
-		.populate("last_updated_by", ["email", "name"])
+	})	.populate("last_updated_by", ["email", "name"])
 		.populate("posted_by", ["email", "name"]);
 
 	if (trackedItem === null) {
@@ -246,9 +245,8 @@ const getTrackedItems = async (projectId) => {
 		error.statusCode = 404;
 		throw error;
 	}
-	let trackedItems = await TrackedItem.find({ project_ref: project._id })
-		.populate("last_updated_by", ["email", "name"])
-		.populate("posted_by", ["email", "name"]);
+	let trackedItems = await TrackedItem.find({ project_ref: project._id }).select({name:1,description:1,item_id:1,location:1,_id:0},)
+
 	if (trackedItems === null || trackedItems.length === 0) {
 		const error = new Error("There are no tracked Items.");
 		error.statusCode = 404;

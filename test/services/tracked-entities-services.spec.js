@@ -29,7 +29,7 @@ describe("Services: Tracked Entities Services", () => {
 	const projectName = "testProject";
 	const projectId = "5f3aaba0b8ee114a141cd0da";
 
-	const userId='5f1aaba0b8ee114a141cd0db'
+	const userId = "5f1aaba0b8ee114a141cd0db";
 	before(async function () {
 		await mongoose.connect(
 			process.env.DB_TESTING,
@@ -83,15 +83,11 @@ describe("Services: Tracked Entities Services", () => {
 			});
 			it("should throw if projectId is of a not existant Project", async () => {
 				await expect(
-					TrackedEntitiesServices.putTrackedUser(
-						userId,
-						userId,
-						{
-							x: 0,
-							y: 1,
-							z: 2,
-						}
-					)
+					TrackedEntitiesServices.putTrackedUser(userId, userId, {
+						x: 0,
+						y: 1,
+						z: 2,
+					})
 				)
 					.to.be.rejectedWith(Error)
 					.and.eventually.have.property("statusCode")
@@ -185,11 +181,11 @@ describe("Services: Tracked Entities Services", () => {
 			});
 
 			it("should return the list of Tracked Users", async () => {
-				await trackedEntitiesServices.putTrackedUser(
-					userId,
-					projectId,
-					{ x: 0, y: 2, z: 3 }
-				);
+				await trackedEntitiesServices.putTrackedUser(userId, projectId, {
+					x: 0,
+					y: 2,
+					z: 3,
+				});
 				expect(await trackedEntitiesServices.getTrackedUsers(projectId))
 					.to.be.array()
 					.with.length(1);
@@ -252,7 +248,7 @@ describe("Services: Tracked Entities Services", () => {
 					},
 					"This Shit is weird"
 				);
-				expect(await TrackedItem.findOne({item_id:"123454446"}))
+				expect(await TrackedItem.findOne({ item_id: "123454446" }))
 					.to.have.property("notes")
 					.with.lengthOf(1);
 			});
@@ -286,11 +282,9 @@ describe("Services: Tracked Entities Services", () => {
 					"Second Note"
 				);
 
-
-				expect(await TrackedItem.findOne({item_id:"123454448"}))
+				expect(await TrackedItem.findOne({ item_id: "123454448" }))
 					.to.have.property("notes")
 					.with.lengthOf(2);
-				
 			});
 
 			it("should update a the TrackedItem once the call to the function has been made", async () => {
@@ -346,6 +340,7 @@ describe("Services: Tracked Entities Services", () => {
 					"description",
 					"itemDescriptionNew"
 				);
+				console.log(trackedItem)
 			});
 		});
 		describe("getTrackedItems()", async () => {
