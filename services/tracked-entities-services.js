@@ -134,6 +134,7 @@ const getTrackedUsers = async (projectId) => {
  * @param {String} itemName
  * @param {String} itemDescription
  * @param {JSON} location
+ * @param {String} itemNote
  */
 const putTrackedItem = async (
 	userId,

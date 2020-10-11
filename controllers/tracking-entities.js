@@ -71,6 +71,7 @@ const putTrackedItem = async (req, res) => {
 	const itemId = req.body.item_id;
 	const itemName = req.body.item_name;
 	const itemDescription = req.body.item_description;
+	const itemNote = req.body.item_note;
 
 	try {
 		const location = await locationEstimatorServices.estimateLocation(
@@ -85,7 +86,8 @@ const putTrackedItem = async (req, res) => {
 			itemId,
 			itemName,
 			itemDescription,
-			location
+			location,
+			itemNote
 		);
 
 		return res.status(200).send({
