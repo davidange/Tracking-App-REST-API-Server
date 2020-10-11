@@ -38,7 +38,7 @@ const putTrackedEntityValidation = [
 				.bail(),
 			//TODO ADD VALIDATION OF MEASUREMENT DATASTRUCTURE FOR GPS LOCAITON METHOd
 		],
-	]).bail(),
+	]),
 ];
 
 const putTrackedUserValidation = putTrackedEntityValidation;
