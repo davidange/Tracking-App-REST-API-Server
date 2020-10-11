@@ -70,7 +70,7 @@ router.put(
  *     }
  * 
  * 
- * @apiSuccess  (Success 200) {json[]} tracked_users List of tracked users
+ * @apiSuccess (Success 200) {json[]} tracked_users List of tracked users
  * @apiSuccess (Success 200) {String} tracked_users.entityType type of tracked Entity
  * @apiSuccess (Success 200) {json} tracked_users.location represents the coordinates of the item
  * @apiSuccess (Success 200) {Number} tracked_users.location.x x coordinate
@@ -215,7 +215,7 @@ router.put(
  *       "Authorization": "TrackingAPI your-access-token-here"
  *     }
  * 
- * @apiSuccess  (Success 200) {json[]} list of tracked Items
+ * @apiSuccess  (Success 200) {json[]} tracked_items list of tracked Items
  * @apiSuccessExample {json} Success-Response
  *   HTTP/1.1 200 OK
  *{
