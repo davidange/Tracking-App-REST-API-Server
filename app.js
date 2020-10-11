@@ -7,6 +7,7 @@ const port = process.env.PORT || 3000;
 const userRouter = require("./routes/userRoutes");
 const projectRouter = require("./routes/projectRoutes");
 const beaconsRouter=require('./routes/beaconsRoutes');
+const trackedEntitiesRouter=require('./routes/tracked-entitesRoutes')
 
 //-------------------------------------------------------------
 dotenv.config();
@@ -36,6 +37,9 @@ app.use("/projects/", projectRouter);
 
 //beaconsRouter Routes
 app.use('/projects/',beaconsRouter);
+
+//Tracking Entities Router
+app.use('/projects/',trackedEntitiesRouter);
 
 //Error Middleware
 app.use((error, req, res, next) => {
