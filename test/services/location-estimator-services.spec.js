@@ -73,9 +73,9 @@ describe("Services: Location Estimator Services", () => {
 	});
 	describe("estimateLocation(...)", () => {
 		const beaconTrackingData = [
-			{ distance: 2, beaconUid: beaconsUid[0] },
-			{ distance: 2, beaconUid: beaconsUid[1] },
-			{ distance: 2, beaconUid: beaconsUid[2] },
+			{ distance: 2, beacon_uid: beaconsUid[0] },
+			{ distance: 2, beacon_uid: beaconsUid[1] },
+			{ distance: 2, beacon_uid: beaconsUid[2] },
 		];
 
 		it("should thow if an invalid method for estimating location is selected", async () => {

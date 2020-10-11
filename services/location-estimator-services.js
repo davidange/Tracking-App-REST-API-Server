@@ -9,14 +9,14 @@ const beaconInfoServices=require('./beacons-info-services')
 
 /**
  * Estimates the Data based on the Location method Selected
- * @param {JSON} data for beacon-trilateration: [{distance,beaconUid}] || for gps-location
+ * @param {JSON} data for beacon-trilateration: [{distance,beacon_uid}] || for gps-location
  * @param {String} locationMethod 
  */
 const estimateLocation =async (projectId,data, locationMethod) => {
 
 	if ("beacon-trilateration"==locationMethod) {
 		
-		const beaconsUids=data.map(beaconMeasurement=>beaconMeasurement.beaconUid)
+		const beaconsUids=data.map(beaconMeasurement=>beaconMeasurement.beacon_uid)
 		const distances=data.map(beaconMeasurement=>beaconMeasurement.distance)
 
 		const locationBeacons=await beaconInfoServices.getBeaconsLocation(projectId,beaconsUids);
