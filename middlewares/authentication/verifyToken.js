@@ -28,7 +28,7 @@ module.exports = (req, res, next) => {
 		error.statusCode = 401;
 		throw error;
 	}
-	//if authenticated
+	//if authenticated saved inside Request so that it canbe accessed in other middlewares
 	req.userId = decodedToken._id;
 	next();
 };
