@@ -29,6 +29,7 @@ describe("Services: Tracked Entities Services", () => {
 	const projectName = "testProject";
 	const projectId = "5f3aaba0b8ee114a141cd0da";
 
+	const userId='5f1aaba0b8ee114a141cd0db'
 	before(async function () {
 		await mongoose.connect(
 			process.env.DB_TESTING,
@@ -50,7 +51,7 @@ describe("Services: Tracked Entities Services", () => {
 			email: emailUser,
 			name: nameUser,
 			password: hashPassword,
-			_id: "5f1aaba0b8ee114a141cd0db",
+			_id: userId,
 		});
 
 		const project = new Project({
@@ -67,7 +68,7 @@ describe("Services: Tracked Entities Services", () => {
 			it("should throw if userId is of a not existant User", async () => {
 				await expect(
 					TrackedEntitiesServices.putTrackedUser(
-						"5f1aaba0b8ee114a141cd0da",
+						"5f1aaba0b8ee114a141cd2db",
 						projectId,
 						{
 							x: 0,
@@ -83,8 +84,8 @@ describe("Services: Tracked Entities Services", () => {
 			it("should throw if projectId is of a not existant Project", async () => {
 				await expect(
 					TrackedEntitiesServices.putTrackedUser(
-						"5f1aaba0b8ee114a141cd0db",
-						"5f3aaba0b8ee114a141cd0dd",
+						userId,
+						userId,
 						{
 							x: 0,
 							y: 1,
@@ -100,7 +101,7 @@ describe("Services: Tracked Entities Services", () => {
 			it("should create a new TrackedUser once the call to the function has been made", async () => {
 				const numOfTrackedUsers = await TrackedUser.estimatedDocumentCount();
 				const trackedUser = await TrackedEntitiesServices.putTrackedUser(
-					"5f1aaba0b8ee114a141cd0db",
+					userId,
 					projectId,
 					{ x: 0, y: 1, z: 2 }
 				);
@@ -112,7 +113,7 @@ describe("Services: Tracked Entities Services", () => {
 			it("should update a the TrackedUser once the call to the function has been made", async () => {
 				const numOfTrackedUsers = await TrackedUser.estimatedDocumentCount();
 				const trackedUser = await TrackedEntitiesServices.putTrackedUser(
-					"5f1aaba0b8ee114a141cd0db",
+					userId,
 					projectId,
 					{ x: 0, y: 2, z: 3 }
 				);
@@ -164,7 +165,7 @@ describe("Services: Tracked Entities Services", () => {
 			});
 			it("should return the Tracking data information of the user", async () => {
 				const trackedUser = await TrackedEntitiesServices.getTrackedUser(
-					"5f1aaba0b8ee114a141cd0db",
+					userId,
 					projectId
 				);
 
@@ -185,7 +186,7 @@ describe("Services: Tracked Entities Services", () => {
 
 			it("should return the list of Tracked Users", async () => {
 				await trackedEntitiesServices.putTrackedUser(
-					"5f1aaba0b8ee114a141cd0db",
+					userId,
 					projectId,
 					{ x: 0, y: 2, z: 3 }
 				);
@@ -221,7 +222,7 @@ describe("Services: Tracked Entities Services", () => {
 			it("should create a new TrackedItem once the call to the function has been made", async () => {
 				const numOfTrackedItems = await TrackedItem.estimatedDocumentCount();
 				const trackedItem = await TrackedEntitiesServices.putTrackedItem(
-					"5f1aaba0b8ee114a141cd0db",
+					userId,
 					projectId,
 					"12345678",
 					"TestItem",
@@ -237,10 +238,65 @@ describe("Services: Tracked Entities Services", () => {
 				);
 			});
 
+			it("should create a new TrackedItem with a note ", async () => {
+				await TrackedEntitiesServices.putTrackedItem(
+					userId,
+					projectId,
+					"123454446",
+					"TestItem",
+					"itemDescription",
+					{
+						x: 0,
+						y: 1,
+						z: 2,
+					},
+					"This Shit is weird"
+				);
+				expect(await TrackedItem.findOne({item_id:"123454446"}))
+					.to.have.property("notes")
+					.with.lengthOf(1);
+			});
+
+			it("should add two Notes to the tracked Item", async () => {
+				await TrackedEntitiesServices.putTrackedItem(
+					userId,
+					projectId,
+					"123454448",
+					"TestItem",
+					"itemDescription",
+					{
+						x: 0,
+						y: 1,
+						z: 2,
+					},
+					"First Note"
+				);
+
+				await TrackedEntitiesServices.putTrackedItem(
+					userId,
+					projectId,
+					"123454448",
+					"TestItem",
+					"itemDescription",
+					{
+						x: 0,
+						y: 1,
+						z: 3,
+					},
+					"Second Note"
+				);
+
+
+				expect(await TrackedItem.findOne({item_id:"123454448"}))
+					.to.have.property("notes")
+					.with.lengthOf(2);
+				
+			});
+
 			it("should update a the TrackedItem once the call to the function has been made", async () => {
 				const numOfTrackedItems = await TrackedItem.estimatedDocumentCount();
 				const trackedItem = await TrackedEntitiesServices.putTrackedItem(
-					"5f1aaba0b8ee114a141cd0db",
+					userId,
 					projectId,
 					"12345678",
 					"TestItemNewName",
@@ -305,7 +361,7 @@ describe("Services: Tracked Entities Services", () => {
 
 			it("should return the list of Tracked Items", async () => {
 				await TrackedEntitiesServices.putTrackedItem(
-					"5f1aaba0b8ee114a141cd0db",
+					userId,
 					projectId,
 					"12345678",
 					"TestItemNewName",

@@ -141,7 +141,8 @@ const putTrackedItem = async (
 	itemId,
 	itemName,
 	itemDescription,
-	location
+	location,
+	itemNote=null,
 ) => {
 	//Parallel run of calls to DB
 	const responses = await Promise.all([
@@ -178,6 +179,10 @@ const putTrackedItem = async (
 			last_updated_by: user,
 			project_ref: project._id,
 		});
+		//push Note if note is defined
+		if (itemNote !== null && itemNote !== undefined) {
+			trackedItem.notes.push(itemNote);
+		}
 	} else {
 		//update Tracked Item
 		trackedItem.historicalData.unshift({
@@ -190,6 +195,10 @@ const putTrackedItem = async (
 		trackedItem.last_updated_by = user;
 		trackedItem.description = itemDescription;
 		trackedItem.name = itemName;
+		//push Note if note is defined
+		if (itemNote !== null && itemNote !== undefined) {
+			trackedItem.notes.push(itemNote);
+		}
 	}
 
 	return await trackedItem.save();
