@@ -8,7 +8,7 @@ const userValidator = require("../middlewares/validators/user");
 let wrapper = (fn) => (...args) => fn(...args).catch(args[2]);
 
 /**
- * @api {post} user/register Register a New User
+ * @api {post} /user/register Register a New User
  * @apiName RegisterUser
  * @apiGroup User
  * @apiDescription Creates and register new user to database.
@@ -34,7 +34,7 @@ router.post(
 );
 
 /**
- * @api {post} user/login Login
+ * @api {post} /user/login Login
  * @apiName LoginUser
  * @apiGroup User
  * @apiDescription Creates a token to authenticate user

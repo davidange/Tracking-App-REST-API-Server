@@ -10,7 +10,7 @@ let wrapper = (fn) => (...args) => fn(...args).catch(args[2]);
 
 
 /**
- * @api {put} projects/:project-id/tracked-users Put the location of the user that is making the API call.
+ * @api {put} /projects/:project-id/tracked-users Put the location of the user that is making the API call.
  * @apiName Put Location of Tracked User
  * @apiGroup Tracked User
  * @apiDescription  Depending on the parameters chosen, the location of the user that made the call is estimated and saved.
@@ -58,7 +58,7 @@ router.put(
 );
 
 /**
- * @api {get} projects/:project-id/tracked-users Get list of locations of tracked users
+ * @api {get} /projects/:project-id/tracked-users Get list of locations of tracked users
  * @apiName Get List of Location of Tracked Users
  * @apiGroup Tracked User
  * @apiDescription  Will return a list of tracked Users 
@@ -104,7 +104,7 @@ router.get(
 
 
 /**
- * @api {get} projects/:project-id/tracked-users/:user_id get Information about Specific Tracked User
+ * @api {get} /projects/:project-id/tracked-users/:user_id get Information about Specific Tracked User
  * @apiName Get  Location of Tracked User
  * @apiGroup Tracked User
  * @apiDescription  Will return information of tracked User
@@ -147,7 +147,7 @@ router.get(
 
 
 /**
- * @api {put} projects/:project-id/tracked-items Put the location of the desired Item
+ * @api {put} /projects/:project-id/tracked-items Put the location of the desired Item
  * @apiName Put Location of Item
  * @apiGroup Tracked Item
  * @apiDescription  Depending on the parameters chosen, the location of the user that made the call is estimated. Based on this location,
@@ -204,7 +204,7 @@ router.put(
 );
 
 /**
- * @api {get} projects/:project-id/tracked-items Get list of locations of tracked items
+ * @api {get} /projects/:project-id/tracked-items Get list of locations of tracked items
  * @apiName Get List of Location of Tracked Items
  * @apiGroup Tracked Item
  * @apiDescription  Will return a list of tracked Items 
@@ -240,7 +240,7 @@ router.get(
 
 
 /**
- * @api {get} projects/:project-id/tracked-items/:item_id Get location of tracked item
+ * @api {get} /projects/:project-id/tracked-items/:item_id Get location of tracked item
  * @apiName Get information about Tracked Items
  * @apiGroup Tracked Item
  * @apiDescription  Will return a list of tracked Items 

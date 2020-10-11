@@ -169,7 +169,7 @@ router.get(
 );
 
 /**
- * @api {post} projects/:project-id/beacons-model Post Model that contains beacons
+ * @api {post} /projects/:project-id/beacons-model Post Model that contains beacons
  * @apiName Post Beacons Model
  * @apiGroup Models
  * @apiDescription Defines the model that contains the beacons. Extracts the list of beacons from that model. A beacon is considered as any GeometryObject that has beacons in its name.
@@ -197,7 +197,7 @@ router.post(
 );
 
 /**
- * @api {delete} projects/:project-id/beacons-model Removes Model that contains beacons
+ * @api {delete} /projects/:project-id/beacons-model Removes Model that contains beacons
  * @apiName Delete Beacons Model
  * @apiGroup Models
  * @apiDescription Removes the linkage to the model that contains the beacons. NOTE: Once removed, there is no way to recover information.
@@ -224,7 +224,7 @@ router.delete(
 );
 
 /**
- * @api {get} projects/:project-id/beacons-model get Model that contains beacons
+ * @api {get} /projects/:project-id/beacons-model get Model that contains beacons
  * @apiName Get Beacons Model
  * @apiGroup Models
  * @apiDescription Obtain the information of the Beacons Model
