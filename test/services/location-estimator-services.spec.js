@@ -49,21 +49,21 @@ describe("Services: Location Estimator Services", () => {
 						_id: "000000001",
 						uid_beacon: beaconsUid[0],
 						name: "beacon1",
-						location: { x: 0, y: 1, z: 0 },
+						location: { x: 0, y: 1, z: 1 },
 					},
 					{
 						is_active: true,
 						_id: "000000002",
 						uid_beacon: beaconsUid[1],
 						name: "beacon2",
-						location: { x: 0, y: 0, z: 0 },
+						location: { x: 0, y: 0, z: 2 },
 					},
 					{
 						is_active: true,
 						_id: "000000003",
 						uid_beacon: beaconsUid[2],
 						name: "beacon3",
-						location: { x: 1, y: 1, z: 0 },
+						location: { x: 1, y: 1, z: 3 },
 					},
 				],
 				_id: "111111111",
@@ -98,10 +98,10 @@ describe("Services: Location Estimator Services", () => {
 				.once()
 				.withArgs([
 					{ radius: 2, x: 0, y: 1 },
-					{ radius: 2, x: 0, y: 0 },
-					{ radius: 2, x: 1, y: 1 },
+					{ radius: 2, x: 0, y: 2 },
+					{ radius: 2, x: 1, y: 3 },
 				])
-				.returns({ x: 0, y: 0 });
+				.returns({ x: 0, y: 0});
 
 			const estimatedLocation = await locationEstimatorServices.estimateLocation(
 				projectId,
@@ -109,7 +109,7 @@ describe("Services: Location Estimator Services", () => {
 				"beacon-trilateration"
 			);
 			expect(estimatedLocation).to.have.property("x", 0);
-			expect(estimatedLocation).to.have.property("y", 0);
+			expect(estimatedLocation).to.have.property("y", 1);
 			expect(estimatedLocation).to.have.property("z", 0);
 			mock.restore();
 			mock.verify();
