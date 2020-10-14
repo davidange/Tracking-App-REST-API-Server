@@ -21,7 +21,7 @@ const putTrackedEntityValidation = [
 				.withMessage("Measurement Data is not valid")
 				.isNumeric()
 				.withMessage("Measurement Data is not valid"),
-			check("measurement_data.*.beaconUid")
+			check("measurement_data.*.beacon_uid")
 				.exists()
 				.withMessage("Measurement Data is not valid")
 				.isString()
