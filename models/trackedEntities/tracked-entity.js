@@ -8,7 +8,7 @@ const trackedEntitySchema = new mongoose.Schema(
 		location: { type: Location.schema, required: true },
 		date: { type: Date, required: true, default: Date.now },
 		project_ref: {
-			type: mongoose.Schema.Types.ObjectId,
+			type: String,
 			ref: "ProjectSchema",
 			required: true,
 		},

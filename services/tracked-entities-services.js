@@ -169,6 +169,7 @@ const putTrackedItem = async (
 		item_id: itemId,
 		project_ref: project._id,
 	});
+
 	//first Time
 	if (trackedItem === null) {
 		trackedItem = new TrackedItem({

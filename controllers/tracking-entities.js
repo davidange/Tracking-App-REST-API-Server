@@ -2,11 +2,11 @@ const locationEstimatorServices = require("../services/location-estimator-servic
 const trackedEntitiesServices = require("../services/tracked-entities-services");
 
 const putTrackedUser = async (req, res) => {
-	const userId = req.user_id;
+	
+	const userId = req.userId;
 	const projectId = req.params.project_id;
 	const measurementData = req.body.measurement_data;
 	const locationMethod = req.body.location_method;
-
 	try {
 		const location = await locationEstimatorServices.estimateLocation(
 			projectId,
@@ -64,7 +64,7 @@ const getTrackedUsers = async (req, res) => {
 };
 
 const putTrackedItem = async (req, res) => {
-	const userId = req.user_id;
+	const userId = req.userId;
 	const projectId = req.params.project_id;
 	const measurementData = req.body.measurement_data;
 	const locationMethod = req.body.location_method;
@@ -72,6 +72,7 @@ const putTrackedItem = async (req, res) => {
 	const itemName = req.body.item_name;
 	const itemDescription = req.body.item_description;
 	const itemNote = req.body.item_note;
+
 
 	try {
 		const location = await locationEstimatorServices.estimateLocation(
