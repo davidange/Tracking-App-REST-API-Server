@@ -6,9 +6,10 @@ const port = process.env.PORT || 3000;
 
 const userRouter = require("./routes/userRoutes");
 const projectRouter = require("./routes/projectRoutes");
-const beaconsRouter=require('./routes/beaconsRoutes');
-const trackedEntitiesRouter=require('./routes/tracked-entitesRoutes')
+const beaconsRouter = require("./routes/beaconsRoutes");
+const trackedEntitiesRouter = require("./routes/tracked-entitesRoutes");
 
+const corsMiddleware=require("./middlewares/CORS/cors")
 //-------------------------------------------------------------
 dotenv.config();
 // creates & updates Token for Bimplus API
@@ -27,6 +28,9 @@ mongoose.connect(
 //to parse incoming requests
 app.use(express.json());
 
+//Middleware for preventing CORS Errors
+app.use(corsMiddleware);
+
 //Documentation route
 app.use("/api-docs", express.static("./docs"));
 
@@ -36,10 +40,10 @@ app.use("/user", userRouter);
 app.use("/projects/", projectRouter);
 
 //beaconsRouter Routes
-app.use('/projects/',beaconsRouter);
+app.use("/projects/", beaconsRouter);
 
 //Tracking Entities Router
-app.use('/projects/',trackedEntitiesRouter);
+app.use("/projects/", trackedEntitiesRouter);
 
 //Error Middleware
 app.use((error, req, res, next) => {
@@ -52,5 +56,5 @@ app.use((error, req, res, next) => {
 //-------------------------------------------------------------
 //start application
 app.listen(port, () => {
-	console.log("Server Up and running at Port :"+ port);
+	console.log("Server Up and running at Port :" + port);
 });
