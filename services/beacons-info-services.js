@@ -92,8 +92,10 @@ const setBeaconUID = async (projectId, beaconId, beaconUID) => {
 		throw error;
 	}
 	//check if there is another beacon with the same UID
-	const beaconWithUID = project.beacons_model.beacons.find((beacon) => beacon.uid_beacon === beaconUID);
-
+	let beaconWithUID;
+	if (beaconUID && beaconUID !== "") {
+		beaconWithUID = project.beacons_model.beacons.find((beacon) => beacon.uid_beacon === beaconUID);
+	}
 	//if there is a beacon with that UID
 	if (beaconWithUID) {
 		// the beacon that the user wants to change to already has the updated Data
