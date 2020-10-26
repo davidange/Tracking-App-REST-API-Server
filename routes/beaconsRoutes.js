@@ -134,7 +134,7 @@ router.get(
  *     {
  *       "Authorization": "TrackingAPI your-access-token-here"
  *     }
- * @apiParam {String} beacon_UID UID of the beacon
+ * @apiParam {String} beacon_UID UID of the beacon. If empty, it will set the UID Beacon as None and set the beacon as inactive.
  * @apiSuccess  (Success 200) {String} message information about the current update status
  * @apiSuccessExample {json} Success-Response
  *   HTTP/1.1 200 OK

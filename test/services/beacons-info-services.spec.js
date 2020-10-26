@@ -19,10 +19,8 @@ describe("Services: Project Services", () => {
 
 	//create User for Testing and get Token from Bimplus
 	before(async function () {
-		await mongoose.connect(
-			process.env.DB_TESTING,
-			{ useUnifiedTopology: true, useNewUrlParser: true },
-			() => console.log("")
+		await mongoose.connect(process.env.DB_TESTING, { useUnifiedTopology: true, useNewUrlParser: true }, () =>
+			console.log("")
 		);
 		token = await bimPlusToken.requestAutenticationToken(
 			process.env.BIMPLUS_USER,
@@ -122,9 +120,7 @@ describe("Services: Project Services", () => {
 
 	describe("getActiveBeacons(...)", () => {
 		it("should return only the activeBeacons", async () => {
-			const activeBeacons = await beaconsInfoServices.getActiveBeacons(
-				"123456"
-			);
+			const activeBeacons = await beaconsInfoServices.getActiveBeacons("123456");
 			expect(activeBeacons).to.be.array();
 			expect(activeBeacons).to.be.length(2);
 		});
@@ -156,18 +152,13 @@ describe("Services: Project Services", () => {
 				.that.equals(404);
 		});
 		it("should throw if a beacon was not found ", async () => {
-			await expect(
-				beaconsInfoServices.getBeaconsLocation("123456", ["123456710"])
-			)
+			await expect(beaconsInfoServices.getBeaconsLocation("123456", ["123456710"]))
 				.to.be.rejectedWith(Error)
 				.and.eventually.have.property("statusCode")
 				.that.equals(404);
 		});
 		it("should return the list of Beacons Location", async () => {
-			const beaconsLocation = await beaconsInfoServices.getBeaconsLocation(
-				"123456",
-				["12345678", "12345677"]
-			);
+			const beaconsLocation = await beaconsInfoServices.getBeaconsLocation("123456", ["12345678", "12345677"]);
 			expect(beaconsLocation).to.be.array().and.to.have.lengthOf(2);
 			expect(beaconsLocation[0]).to.have.property("x", 0);
 			expect(beaconsLocation[0]).to.have.property("y", 1);
@@ -177,38 +168,33 @@ describe("Services: Project Services", () => {
 
 	describe("setBeaconUID(...)", () => {
 		it("should throw if the project id is the wrong one ", async () => {
-			await expect(
-				beaconsInfoServices.setBeaconUID("111111", "000000001", "1234564")
-			)
+			await expect(beaconsInfoServices.setBeaconUID("111111", "000000001", "1234564"))
 				.to.be.rejectedWith(Error)
 				.and.eventually.have.property("statusCode")
 				.that.equals(404);
 		});
 		it("should throw if the beacon_id is not in beacons_model", async () => {
-			await expect(
-				beaconsInfoServices.setBeaconUID("123456", "000000008", "1234564")
-			)
+			await expect(beaconsInfoServices.setBeaconUID("123456", "000000008", "1234564"))
 				.to.be.rejectedWith(Error)
 				.and.eventually.have.property("statusCode")
 				.that.equals(404);
 		});
 
 		it("should throw if another beacon has the desired Beacon UID", async () => {
-			await expect(
-				beaconsInfoServices.setBeaconUID("123456", "000000002", "12345678")
-			)
+			await expect(beaconsInfoServices.setBeaconUID("123456", "000000002", "12345678"))
 				.to.be.rejectedWith(Error)
 				.and.eventually.have.property("statusCode")
 				.that.equals(403);
 		});
 		it("should return the beacon info if the update was successful", async () => {
-			const beacon = await beaconsInfoServices.setBeaconUID(
-				"123456",
-				"000000001",
-				"UIDBEACON"
-			);
+			const beacon = await beaconsInfoServices.setBeaconUID("123456", "000000001", "UIDBEACON");
 			expect(beacon).to.have.property("name", "beacon1");
 			expect(beacon).to.have.property("is_active", true);
+		});
+		it("should set a beacon as inactive if the input was null", async () => {
+			const beacon = await beaconsInfoServices.setBeaconUID("123456", "000000001", "");
+			expect(beacon).to.have.property("name", "beacon1");
+			expect(beacon).to.have.property("is_active", false);
 		});
 	});
 
@@ -227,10 +213,7 @@ describe("Services: Project Services", () => {
 		});
 
 		it("should return the beacon info updated if the deletion of the UID was successful", async () => {
-			const beacon = await beaconsInfoServices.deleteBeaconUID(
-				"123456",
-				"000000001"
-			);
+			const beacon = await beaconsInfoServices.deleteBeaconUID("123456", "000000001");
 			expect(beacon).to.have.property("name", "beacon1");
 			expect(beacon).to.have.property("is_active", false);
 		});

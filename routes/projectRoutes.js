@@ -180,7 +180,7 @@ router.get(
  *       "Authorization": "TrackingAPI your-access-token-here"
  *     }
  *
- * @apiParam {String} model_id Id of the model that contains the beacons.
+ * @apiParam {String} model_id Id of the model that contains the beacons. 
  *
  * @apiSuccess  (Success 200) {String} message Indicates success of post.
  * @apiSuccessExample {json} Success-Response

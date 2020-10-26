@@ -64,12 +64,12 @@ const getBeaconsLocation = async (projectId, beaconsUid) => {
 
 	for (let beaconUid of beaconsUid) {
 		let beacon = beacons.find((beacon) => beacon.uid_beacon === beaconUid);
-		if (beacon === undefined ||beacon===null) {
+		if (beacon === undefined || beacon === null) {
 			const error = new Error("A Beacon UID  Is not found Found");
 			error.statusCode = 404;
 			throw error;
 		}
-		locations.push(beacon.location)
+		locations.push(beacon.location);
 	}
 
 	return locations;
@@ -92,9 +92,7 @@ const setBeaconUID = async (projectId, beaconId, beaconUID) => {
 		throw error;
 	}
 	//check if there is another beacon with the same UID
-	const beaconWithUID = project.beacons_model.beacons.find(
-		(beacon) => beacon.uid_beacon === beaconUID
-	);
+	const beaconWithUID = project.beacons_model.beacons.find((beacon) => beacon.uid_beacon === beaconUID);
 
 	//if there is a beacon with that UID
 	if (beaconWithUID) {
@@ -102,15 +100,17 @@ const setBeaconUID = async (projectId, beaconId, beaconUID) => {
 		if (beaconWithUID._id === beacon._id) {
 			return beacon;
 		}
-		const error = new Error(
-			"There is another beacon that already has that UID"
-		);
+		const error = new Error("There is another beacon that already has that UID");
 		error.statusCode = 403;
 		throw error;
 	}
 
 	beacon.uid_beacon = beaconUID;
-	beacon.is_active = true;
+	if (beaconUID && beaconUID !== "") {
+		beacon.is_active = true;
+	} else {
+		beacon.is_active = false;
+	}
 
 	await beacon.save({ suppressWarning: true }); //validate Subdocument Beacon
 	await project.save(); //save Project Document
