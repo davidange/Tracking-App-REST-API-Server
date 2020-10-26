@@ -134,25 +134,13 @@ router.get(
  *     {
  *       "Authorization": "TrackingAPI your-access-token-here"
  *     }
- * 
- * @apiSuccess  (Success 200) {Object} beacon information about the current beacon
+ * @apiParam {String} beacon_UID UID of the beacon
+ * @apiSuccess  (Success 200) {String} message information about the current update status
  * @apiSuccessExample {json} Success-Response
  *   HTTP/1.1 200 OK
  *{
- *    "beacons": [
- *        {
- *            "is_active": true,
- *            "_id": "3fe89152-46fc-428a-ba8a-18a165b92a91",
- *            "id_beacon": "beaconUID"
- *            "name": "Beacon7:Beacon:2439889",
- *            "location": {
- *                "x": -8680.2,
- *                "y": 6270,
- *                "z": 7009.4
- *            }
- *        },...
- *    ]
- *}
+ *    "message": "Success."
+ *
  */
 router.patch(
 	"/:project_id/beacons/:beacon_id",
