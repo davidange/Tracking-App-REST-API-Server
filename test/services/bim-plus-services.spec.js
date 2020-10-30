@@ -32,24 +32,18 @@ describe("Services: Bim-Plus-Services", () => {
 
 	describe("getProjects(...)", () => {
 		it("should return list of the Projects available in BimPlus Account", async () => {
-			const projects = await bimPlusServices.getProjects(
-				token.access_token,
-				slug
-			);
+			const projects = await bimPlusServices.getProjects(token.access_token, slug);
 			expect(projects).to.be.array();
 			expect(projects[0]).to.have.property("slug");
 			expect(projects[0]).to.have.property("name");
 			expect(projects[0]).to.have.property("_id");
+			expect(projects[0]).to.have.property("team_id");
 		});
 	});
 
 	describe("getModels(...)", () => {
 		it("should return list of models for selected Project", async () => {
-			const models = await bimPlusServices.getModels(
-				token.access_token,
-				slug,
-				projectId
-			);
+			const models = await bimPlusServices.getModels(token.access_token, slug, projectId);
 			expect(models).to.be.array();
 			expect(models[0]).to.have.property("name");
 			expect(models[0]).to.have.property("description");
@@ -60,11 +54,7 @@ describe("Services: Bim-Plus-Services", () => {
 
 	describe("getObjectTree(...)", () => {
 		it("should return the Object Tree for selected Model", async () => {
-			const objectTree = await bimPlusServices.getObjectTree(
-				token.access_token,
-				slug,
-				modelTopologyId
-			);
+			const objectTree = await bimPlusServices.getObjectTree(token.access_token, slug, modelTopologyId);
 
 			expect(objectTree).to.have.property("children");
 			expect(objectTree).to.have.property("name");
@@ -74,19 +64,13 @@ describe("Services: Bim-Plus-Services", () => {
 
 	describe("getObjectTreeWithPropertyList(...)", () => {
 		it("should return the Object tree with Property List for selected Model", function (done) {
-			this.timeout(15000);//raise Timeout limit to 15000ms 
-			bimPlusServices
-				.getObjectTreeWithPropertyList(
-					token.access_token,
-					slug,
-					modelTopologyId
-				)
-				.then((objectTree) => {
-					expect(objectTree).to.have.property("elementsCount");
-					expect(objectTree).to.have.property("viewbox");
-					expect(objectTree).to.have.property("objects");
-					done();
-				});
+			this.timeout(15000); //raise Timeout limit to 15000ms
+			bimPlusServices.getObjectTreeWithPropertyList(token.access_token, slug, modelTopologyId).then((objectTree) => {
+				expect(objectTree).to.have.property("elementsCount");
+				expect(objectTree).to.have.property("viewbox");
+				expect(objectTree).to.have.property("objects");
+				done();
+			});
 		});
 	});
 });

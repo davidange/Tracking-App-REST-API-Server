@@ -3,7 +3,6 @@ const BeaconsModel = require("../models/model/beacons-model");
 const bimPlusServices = require("./bim-plus-services");
 const additionalFunctions = require("./additional-functions");
 
-
 /**
  * Updates the list of Projects in the Database
  * TODO : Define what happens when project is removed.
@@ -15,25 +14,20 @@ const update = async (bimPlusAuthToken) => {
 	const teams = await bimPlusServices.getTeams(bimPlusAuthToken);
 
 	for (team of teams) {
-		const projects = await bimPlusServices.getProjects(
-			bimPlusAuthToken,
-			team.slug
-		);
+		const projects = await bimPlusServices.getProjects(bimPlusAuthToken, team.slug);
 		//update list of projects in database
 		for (project of projects) {
 			project.team_name = team.name;
+
 			project.team_id = team._id;
+
 			//get List of models for that project
-			const models = await bimPlusServices.getModels(
-				bimPlusAuthToken,
-				team.slug,
-				project._id
-			);
+			const models = await bimPlusServices.getModels(bimPlusAuthToken, team.slug, project._id);
 			const update = {
 				slug: team.slug,
 				name: project.name,
 				team_name: team.name,
-				team_id: team.team_id,
+				team_id: project.team_id,
 				models: models,
 			};
 			let doc = await Project.findByIdAndUpdate(project._id, update, {
@@ -51,7 +45,7 @@ const update = async (bimPlusAuthToken) => {
  * @returns list of All Projects saved on Db
  */
 const getAll = async () => {
-	let projects = await Project.find({}, { name: 1, slug: 1, team_name: 1 });
+	let projects = await Project.find({}, { name: 1, slug: 1, team_name: 1, team_id: 1 });
 	if (projects === null || projects.length === 0) {
 		const error = new Error("There are no Projects Registered.");
 		error.statusCode = 404;
@@ -77,10 +71,9 @@ const get = async (projectId) => {
 	return project;
 };
 
-
 /**
- * 
- * @param {String} projectId 
+ *
+ * @param {String} projectId
  * @returns {JSON} list of models
  */
 const getModels = async (projectId) => {
@@ -94,17 +87,15 @@ const getModels = async (projectId) => {
 };
 
 /**
- * 
- * @param {String} projectId 
- * @param {String} modelId 
- * @param {String} bimPlusAuthToken 
+ *
+ * @param {String} projectId
+ * @param {String} modelId
+ * @param {String} bimPlusAuthToken
  */
 const setBeaconsModel = async (projectId, modelId, bimPlusAuthToken) => {
 	const project = await get(projectId);
 	if (project.beacons_model !== null && project.beacons_model !== undefined) {
-		const error = new Error(
-			"There is already a model defined that should contain beacons. Remove that model first"
-		);
+		const error = new Error("There is already a model defined that should contain beacons. Remove that model first");
 		error.statusCode = 403;
 		throw error;
 	}
@@ -115,22 +106,13 @@ const setBeaconsModel = async (projectId, modelId, bimPlusAuthToken) => {
 
 	if (foundModel) {
 		//getTopologyTree of Model
-		const topologyTree = await bimPlusServices.getObjectTree(
-			bimPlusAuthToken,
-			project.slug,
-			foundModel.id_topology
-		);
+		const topologyTree = await bimPlusServices.getObjectTree(bimPlusAuthToken, project.slug, foundModel.id_topology);
 		//flatten tree
-		const flattenTopologyTree = additionalFunctions.flatten(
-			topologyTree,
-			"children"
-		);
+		const flattenTopologyTree = additionalFunctions.flatten(topologyTree, "children");
 
 		//filter only Beacon Elements
 		const filteredFlatTopTree = flattenTopologyTree.filter(
-			(element) =>
-				element.type === "GeometryObject" &&
-				element.name.toLowerCase().includes("beacon")
+			(element) => element.type === "GeometryObject" && element.name.toLowerCase().includes("beacon")
 		);
 
 		if (!filteredFlatTopTree.length > 0) {
@@ -143,17 +125,10 @@ const setBeaconsModel = async (projectId, modelId, bimPlusAuthToken) => {
 
 		//for Each Beacon, obtain its coordinates
 		//run in parallel requests
-		const beaconsGeometricDataPromises = filteredFlatTopTree.map(
-			(beaconBasicData) =>
-				bimPlusServices.getObjectTreeWithPropertyList(
-					bimPlusAuthToken,
-					project.slug,
-					beaconBasicData.id
-				)
+		const beaconsGeometricDataPromises = filteredFlatTopTree.map((beaconBasicData) =>
+			bimPlusServices.getObjectTreeWithPropertyList(bimPlusAuthToken, project.slug, beaconBasicData.id)
 		);
-		const beaconsGeometricData = await Promise.all(
-			beaconsGeometricDataPromises
-		);
+		const beaconsGeometricData = await Promise.all(beaconsGeometricDataPromises);
 
 		// combine Beacon Data
 		const beacons = [];
@@ -184,8 +159,8 @@ const setBeaconsModel = async (projectId, modelId, bimPlusAuthToken) => {
 };
 
 /**
- * 
- * @param {String} projectId 
+ *
+ * @param {String} projectId
  * @returns beacons Model
  */
 const getBeaconsModel = async (projectId) => {
@@ -204,8 +179,8 @@ const getBeaconsModel = async (projectId) => {
 };
 
 /**
- * 
- * @param {String} projectId 
+ *
+ * @param {String} projectId
  */
 const deleteBeaconsModel = async (projectId) => {
 	const project = await get(projectId);

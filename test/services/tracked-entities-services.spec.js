@@ -340,7 +340,6 @@ describe("Services: Tracked Entities Services", () => {
 					"description",
 					"itemDescriptionNew"
 				);
-				console.log(trackedItem)
 			});
 		});
 		describe("getTrackedItems()", async () => {

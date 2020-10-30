@@ -82,12 +82,14 @@ describe("Services: Project Services", () => {
 				slug: "slug",
 				name: "projectName",
 				_id: "123456",
+				team_id:"4445555"
 			});
 			await project.save();
 			const listOfProjects = await projectServices.getAll();
 			expect(listOfProjects).to.be.array();
 			expect(listOfProjects[0]).to.have.property("slug", "slug");
 			expect(listOfProjects[0]).to.have.property("_id", "123456");
+			expect(listOfProjects[0]).to.have.property("team_id", "4445555");
 		});
 	});
 
