@@ -139,12 +139,10 @@ describe("Services: Project Services", () => {
 					_id: "000001",
 				},
 			});
-			console.log(project);
 			await project.save();
 		});
 		it("should return the models inside the Project", async () => {
 			const models = await projectServices.getModels("123456");
-			console.log(models);
 			expect(models).to.be.array();
 			expect(models[0]).to.have.property("_id", "000001");
 			expect(models[0]).to.have.property("is_beacon_model", true);
@@ -164,7 +162,7 @@ describe("Services: Project Services", () => {
 	describe("setBeaconsModel(...)", () => {
 		before(async function () {
 			await Project.deleteMany({});
-			
+
 			const project = new Project({
 				slug: "slug",
 				name: "projectName",

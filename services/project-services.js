@@ -91,7 +91,6 @@ const getModels = async (projectId) => {
 	const modelsProcessed = models.models.map((model) => {
 		return { ...model.toJSON(), is_beacon_model: model._id === beacons_model_id };
 	});
-	console.log(modelsProcessed);
 
 	return modelsProcessed;
 };
