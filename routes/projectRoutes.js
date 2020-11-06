@@ -34,12 +34,7 @@ let wrapper = (fn) => (...args) => fn(...args).catch(args[2]);
  *   }
  *
  */
-router.post(
-	"/update",
-	verifyBimPlusToken,
-	verifyAccessToken,
-	wrapper(projectController.updateProjects)
-);
+router.post("/update", verifyBimPlusToken, verifyAccessToken, wrapper(projectController.updateProjects));
 
 /**
  * @api {get} projects Get List of Projects
@@ -66,12 +61,7 @@ router.post(
  *      ]
  *}
  */
-router.get(
-	"",
-	verifyBimPlusToken,
-	verifyAccessToken,
-	wrapper(projectController.getProjects)
-);
+router.get("", verifyBimPlusToken, verifyAccessToken, wrapper(projectController.getProjects));
 
 /**
  * @api {get} projects/:project-id Get Project
@@ -122,12 +112,7 @@ router.get(
  *    }
  *}
  */
-router.get(
-	"/:project_id",
-	verifyBimPlusToken,
-	verifyAccessToken,
-	wrapper(projectController.getProject)
-);
+router.get("/:project_id", verifyBimPlusToken, verifyAccessToken, wrapper(projectController.getProject));
 
 /**
  * @api {get} projects/:project-id/models Get List of Models
@@ -150,23 +135,20 @@ router.get(
  *            "name": "Beacon_Model",
  *            "description": null,
  *            "id_topology": "72678b29-51b4-4fc6-aece-3750fd1ac0bb",
- *            "_id": "36c441e4-383d-47b6-af4e-5d52c1d3b833"
+ *            "_id": "36c441e4-383d-47b6-af4e-5d52c1d3b833",
+ * 			  "is_beacon_model":true
  *        },
  *        {
  *            "name": "TU Gebäude 2019",
  *            "description": null,
  *            "id_topology": "1c6bcd2f-d1f2-4290-ba11-f443f225a038",
- *            "_id": "ba2ae3d0-f22c-492b-85b9-af0213365df2"
+ *            "_id": "ba2ae3d0-f22c-492b-85b9-af0213365df2",
+ * 			  "is_beacon_model":false
  *        }
  *    ]
  *}
  */
-router.get(
-	"/:project_id/models",
-	verifyBimPlusToken,
-	verifyAccessToken,
-	wrapper(projectController.getModels)
-);
+router.get("/:project_id/models", verifyBimPlusToken, verifyAccessToken, wrapper(projectController.getModels));
 
 /**
  * @api {post} /projects/:project-id/beacons-model Post Model that contains beacons
@@ -180,7 +162,7 @@ router.get(
  *       "Authorization": "TrackingAPI your-access-token-here"
  *     }
  *
- * @apiParam {String} model_id Id of the model that contains the beacons. 
+ * @apiParam {String} model_id Id of the model that contains the beacons.
  *
  * @apiSuccess  (Success 200) {String} message Indicates success of post.
  * @apiSuccessExample {json} Success-Response

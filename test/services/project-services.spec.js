@@ -21,10 +21,8 @@ describe("Services: Project Services", () => {
 
 	//Get Token from Bimplus
 	before(async function () {
-		await mongoose.connect(
-			process.env.DB_TESTING,
-			{ useUnifiedTopology: true, useNewUrlParser: true },
-			() => console.log("")
+		await mongoose.connect(process.env.DB_TESTING, { useUnifiedTopology: true, useNewUrlParser: true }, () =>
+			console.log("")
 		);
 		token = await bimPlusToken.requestAutenticationToken(
 			process.env.BIMPLUS_USER,
@@ -82,7 +80,7 @@ describe("Services: Project Services", () => {
 				slug: "slug",
 				name: "projectName",
 				_id: "123456",
-				team_id:"4445555"
+				team_id: "4445555",
 			});
 			await project.save();
 			const listOfProjects = await projectServices.getAll();
@@ -125,19 +123,33 @@ describe("Services: Project Services", () => {
 				slug: "slug",
 				name: "projectName",
 				_id: "123456",
-				models: new Model({
+				models: [
+					new Model({
+						_id: "000001",
+						name: "modelName",
+						id_topology: "top001",
+					}),
+					new Model({
+						_id: "000002",
+						name: "modelName2",
+						id_topology: "top002",
+					}),
+				],
+				beacons_model: {
 					_id: "000001",
-					name: "modelName",
-					id_topology: "top001",
-				}),
+				},
 			});
+			console.log(project);
 			await project.save();
 		});
 		it("should return the models inside the Project", async () => {
 			const models = await projectServices.getModels("123456");
+			console.log(models);
 			expect(models).to.be.array();
 			expect(models[0]).to.have.property("_id", "000001");
+			expect(models[0]).to.have.property("is_beacon_model", true);
 		});
+
 		it("should throw if id given is not of a valid Project", async () => {
 			await expect(projectServices.getModels("111111"))
 				.to.be.rejectedWith(Error)
@@ -151,6 +163,8 @@ describe("Services: Project Services", () => {
 
 	describe("setBeaconsModel(...)", () => {
 		before(async function () {
+			await Project.deleteMany({});
+			
 			const project = new Project({
 				slug: "slug",
 				name: "projectName",
@@ -165,18 +179,14 @@ describe("Services: Project Services", () => {
 		});
 
 		it("should throw an error if the project ID is invalid", async () => {
-			await expect(
-				projectServices.setBeaconsModel("111111", "000001", token.access_token)
-			)
+			await expect(projectServices.setBeaconsModel("111111", "000001", token.access_token))
 				.to.be.rejectedWith(Error)
 				.and.eventually.have.property("statusCode")
 				.that.equals(404);
 		});
 
 		it("should throw an error if the model ID is one of a model not inside the project", async () => {
-			await expect(
-				projectServices.setBeaconsModel("123456", "000004", token.access_token)
-			)
+			await expect(projectServices.setBeaconsModel("123456", "000004", token.access_token))
 				.to.be.rejectedWith(Error)
 				.and.eventually.have.property("statusCode")
 				.that.equals(404);
@@ -194,9 +204,7 @@ describe("Services: Project Services", () => {
 				],
 			});
 
-			await expect(
-				projectServices.setBeaconsModel("123456", "000001", token.access_token)
-			)
+			await expect(projectServices.setBeaconsModel("123456", "000001", token.access_token))
 				.to.be.rejectedWith(Error)
 				.and.eventually.have.property("statusCode")
 				.that.equals(500);
@@ -216,10 +224,7 @@ describe("Services: Project Services", () => {
 				],
 			});
 
-			const stub2 = sinon.stub(
-				bimPlusServices,
-				"getObjectTreeWithPropertyList"
-			);
+			const stub2 = sinon.stub(bimPlusServices, "getObjectTreeWithPropertyList");
 			stub2.returns({
 				objects: [{ id: "000000001" }],
 				viewbox: {
@@ -229,29 +234,20 @@ describe("Services: Project Services", () => {
 				},
 			});
 
-			await projectServices.setBeaconsModel(
-				"123456",
-				"000001",
-				token.access_token
-			);
+			await projectServices.setBeaconsModel("123456", "000001", token.access_token);
 
 			//load Project
 			const project = await projectServices.get("123456");
 			expect(project).to.have.property("beacons_model");
 			expect(project.beacons_model).to.have.property("_id", "000001");
-			expect(project.beacons_model.beacons[0]).to.have.property(
-				"is_active",
-				false
-			);
+			expect(project.beacons_model.beacons[0]).to.have.property("is_active", false);
 
 			stub.restore();
 			stub2.restore();
 		});
 
 		it("should throw if project already has a default Beacons Model", async () => {
-			await expect(
-				projectServices.setBeaconsModel("123456", "000001", token.access_token)
-			)
+			await expect(projectServices.setBeaconsModel("123456", "000001", token.access_token))
 				.to.be.rejectedWith(Error)
 				.and.eventually.have.property("statusCode")
 				.that.equals(403);

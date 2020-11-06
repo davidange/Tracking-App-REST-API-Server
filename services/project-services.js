@@ -77,13 +77,23 @@ const get = async (projectId) => {
  * @returns {JSON} list of models
  */
 const getModels = async (projectId) => {
-	const models = await Project.findById(projectId, { models: 1, _id: 0 });
+	const models = await Project.findById(projectId, { models: 1, _id: 0, beacons_model: 1 });
 	if (models === null) {
 		const error = new Error("Project with that ID does not exist.");
 		error.statusCode = 404;
 		throw error;
 	}
-	return models.models;
+	//already fetched the models,
+	let beacons_model_id;
+	if (models.beacons_model) {
+		beacons_model_id = models.beacons_model._id;
+	}
+	const modelsProcessed = models.models.map((model) => {
+		return { ...model.toJSON(), is_beacon_model: model._id === beacons_model_id };
+	});
+	console.log(modelsProcessed);
+
+	return modelsProcessed;
 };
 
 /**
