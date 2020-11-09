@@ -4,7 +4,7 @@ const { point, segment, circle, Vector, matrix } = require("@flatten-js/core");
  * each item of the list is the distance measured to the beacon and its components
  * Note: It is implemented as a 2D trilateration (hence, component z is disregarded to simplify implementation)
  *
- * @param {String} listOfMeasurements
+ * @param {[JSON]} listOfMeasurements
  * Reference:
  * Cantón Paterna, V.;
  * Calveras Augé, A.;
@@ -75,7 +75,7 @@ const weightedTrilateration = (listOfMeasurements) => {
 			numOfIntersections += 2;
 		}
 	});
-	
+
 	let locationPoint;
 
 	if (numOfIntersections === 6) {
@@ -133,7 +133,7 @@ const weightedTrilateration = (listOfMeasurements) => {
 
 		//line bewteen 2 smallest cirlces
 		const line1 = segment(listOfCircles[0].pc, listOfCircles[1].pc);
-		
+
 		//intersection Point between line and circles
 		const intersections = [];
 		intersections.push(line1.intersect(listOfCircles[0])[0]);
