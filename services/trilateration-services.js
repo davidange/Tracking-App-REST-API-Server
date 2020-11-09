@@ -1,4 +1,4 @@
-const { point, segment, circle, vector, matrix } = require("@flatten-js/core");
+const { point, segment, circle, Vector, matrix } = require("@flatten-js/core");
 /**
  * Calculates the location based on a list of measurements where
  * each item of the list is the distance measured to the beacon and its components
@@ -71,12 +71,11 @@ const weightedTrilateration = (listOfMeasurements) => {
 	//if there is 0 intersections, then no cirlce intersect
 	let numOfIntersections = 0;
 	distancesToIPsList.forEach((distances) => {
-		console.log(distances);
 		if (distances.length > 0) {
 			numOfIntersections += 2;
 		}
 	});
-	//console.log(numOfIntersections);
+	
 	let locationPoint;
 
 	if (numOfIntersections === 6) {
@@ -110,10 +109,11 @@ const weightedTrilateration = (listOfMeasurements) => {
 
 		const scaledLine = line.transform(translatingMatrix).transform(scalingMatrix).transform(translatingMatrix2);
 
-		locationPoint = scaledLine.end.toJSON();
+		locationPoint = scaledLine.end;
 	} else if (numOfIntersections === 4) {
 	} else if (numOfIntersections === 2) {
-		// flattens list of Distances and finds the shortests Segment  
+		//Two circles intersect
+		// flattens list of Distances and finds the shortests Segment
 		//(Returns only [1] as the [0] contains the length of the segment and [1] contains the Segment Object)
 		const shortestLine = distancesToIPsList.flat().reduce(
 			(prev, curr) => {
@@ -121,10 +121,36 @@ const weightedTrilateration = (listOfMeasurements) => {
 			},
 			[Infinity]
 		)[1];
-		locationPoint = shortestLine.start.toJSON();
+		locationPoint = shortestLine.start;
 	} else {
+		//no circles Intersect
+
+		//weights of circles radiuses
+		//biggest and smallest circle
+		const w31 = listOfCircles[0].r / listOfCircles[2].r;
+		//middle and smallest cirlce
+		const w32 = listOfCircles[0].r / listOfCircles[1].r;
+
+		//line bewteen 2 smallest cirlces
+		const line1 = segment(listOfCircles[0].pc, listOfCircles[1].pc);
+		
+		//intersection Point between line and circles
+		const intersections = [];
+		intersections.push(line1.intersect(listOfCircles[0])[0]);
+		intersections.push(line1.intersect(listOfCircles[1])[0]);
+		//Vector between intersection Points scaled to length d1
+		const vectord1 = new Vector(intersections[0], intersections[1]).multiply(w32);
+
+		const pointd1 = intersections[0].translate(vectord1);
+		//line between point at d1 to center of biggest circle
+		const line2 = segment(listOfCircles[2].pc, pointd1);
+
+		const vectord2 = new Vector(pointd1, line2.intersect(listOfCircles[2])[0]).multiply(w31);
+
+		locationPoint = pointd1.translate(vectord2);
 	}
 
+	locationPoint = locationPoint.toJSON();
 	delete locationPoint.name;
 	return locationPoint;
 };

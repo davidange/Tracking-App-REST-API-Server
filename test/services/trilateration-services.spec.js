@@ -53,9 +53,22 @@ describe("Services: Weighted Trilateration", () => {
 				{ radius: 10, x: 5, y: 5 },
 			];
 			const location = weigthedMultilateration.weightedTrilateration(listMeasuerements);
-			console.log(location)
+			console.log(location);
 			expect(location).to.have.property("x").closeTo(3.8064883250588, 0.00001);
 			expect(location).to.have.property("y").closeTo(-1.2290839655, 0.00001);
+		});
+
+		it("should approximate the correct location when no circles intersect", () => {
+			const listMeasuerements = [
+				{ radius: 3, x: 0, y: 0 },
+				{ radius: 4, x: 0, y: 9 },
+				{ radius: 5.83095189485, x: 12, y: 5 },
+				{ radius: 10, x: 5, y: 5 },
+			];
+			const location = weigthedMultilateration.weightedTrilateration(listMeasuerements);
+			console.log(location);
+			expect(location).to.have.property("x").closeTo(3.1765498458533, 0.00001);
+			expect(location).to.have.property("y").closeTo(4.63235624357, 0.00001);
 		});
 	});
 });
