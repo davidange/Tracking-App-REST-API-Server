@@ -8,12 +8,15 @@ const userRouter = require("./routes/userRoutes");
 const projectRouter = require("./routes/projectRoutes");
 const beaconsRouter = require("./routes/beaconsRoutes");
 const trackedEntitiesRouter = require("./routes/tracked-entitesRoutes");
+const socketIo = require("./util/SocketIO/socketIo");
 
-const corsMiddleware=require("./middlewares/CORS/cors")
+const corsMiddleware = require("./middlewares/CORS/cors");
 //-------------------------------------------------------------
 dotenv.config();
 // creates & updates Token for Bimplus API
 require("./config/bimPlusTokenGenerator")(app);
+//sets up the SocketIO Singleton
+const io = new socketIo(app);
 
 //-------------------------------------------------------------
 //connect to DB
