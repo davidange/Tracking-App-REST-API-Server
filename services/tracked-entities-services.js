@@ -2,6 +2,7 @@ const TrackedItem = require("../models/trackedEntities/tracked-item");
 const TrackedUser = require("../models/trackedEntities/tracked-user");
 const User = require("../models/user");
 const Project = require("../models/project");
+const { emitEntityNewLocation } = require("../util/SocketIO/events");
 
 /**
  * This Service is for Storing/getting the Location of a tracked Entity
@@ -16,10 +17,7 @@ const Project = require("../models/project");
  */
 const putTrackedUser = async (userId, projectId, location) => {
 	//Parallel run of calls to DB
-	const responses = await Promise.all([
-		User.findById(userId),
-		Project.findById(projectId),
-	]);
+	const responses = await Promise.all([User.findById(userId), Project.findById(projectId)]);
 	const user = responses[0];
 	const project = responses[1];
 
@@ -58,7 +56,8 @@ const putTrackedUser = async (userId, projectId, location) => {
 		trackedUser.location = location;
 		trackedUser.date = Date.now();
 	}
-
+	let { x, y, z } = location;
+	emitEntityNewLocation(projectId, userId, x, y, z);
 	return await trackedUser.save();
 };
 
@@ -70,10 +69,7 @@ const putTrackedUser = async (userId, projectId, location) => {
  */
 const getTrackedUser = async (userId, projectId) => {
 	//Parallel run of calls to DB
-	const responses = await Promise.all([
-		User.findById(userId),
-		Project.findById(projectId),
-	]);
+	const responses = await Promise.all([User.findById(userId), Project.findById(projectId)]);
 	const user = responses[0];
 	const project = responses[1];
 
@@ -95,9 +91,7 @@ const getTrackedUser = async (userId, projectId) => {
 	}).populate("user", ["email", "name"]);
 
 	if (trackedUser === null) {
-		const error = new Error(
-			"There is no information about the tracking of the User"
-		);
+		const error = new Error("There is no information about the tracking of the User");
 		error.statusCode = 404;
 		throw error;
 	}
@@ -117,7 +111,9 @@ const getTrackedUsers = async (projectId) => {
 	}
 	let trackedUsers = await TrackedUser.find({
 		project_ref: project._id,
-	}).select({user:1,location:1,_id:0},).populate("user", ["_id","email", "name"]);
+	})
+		.select({ user: 1, location: 1, _id: 0 })
+		.populate("user", ["_id", "email", "name"]);
 	if (trackedUsers === null || trackedUsers.length === 0) {
 		const error = new Error("There are no tracked Users.");
 		error.statusCode = 404;
@@ -136,20 +132,9 @@ const getTrackedUsers = async (projectId) => {
  * @param {JSON} location
  * @param {String} itemNote
  */
-const putTrackedItem = async (
-	userId,
-	projectId,
-	itemId,
-	itemName,
-	itemDescription,
-	location,
-	itemNote=null,
-) => {
+const putTrackedItem = async (userId, projectId, itemId, itemName, itemDescription, location, itemNote = null) => {
 	//Parallel run of calls to DB
-	const responses = await Promise.all([
-		User.findById(userId),
-		Project.findById(projectId),
-	]);
+	const responses = await Promise.all([User.findById(userId), Project.findById(projectId)]);
 	const user = responses[0];
 	const project = responses[1];
 
@@ -202,7 +187,9 @@ const putTrackedItem = async (
 			trackedItem.notes.push(itemNote);
 		}
 	}
-
+	//emit Location
+	let { x, y, z } = location;
+	emitEntityNewLocation(projectId, itemId, x, y, z);
 	return await trackedItem.save();
 };
 
@@ -222,13 +209,12 @@ const getTrackedItem = async (itemId, projectId) => {
 	let trackedItem = await TrackedItem.findOne({
 		item_id: itemId,
 		project_ref: project._id,
-	})	.populate("last_updated_by", ["email", "name"])
+	})
+		.populate("last_updated_by", ["email", "name"])
 		.populate("posted_by", ["email", "name"]);
 
 	if (trackedItem === null) {
-		const error = new Error(
-			"There is no tracking information about the desired Item"
-		);
+		const error = new Error("There is no tracking information about the desired Item");
 		error.statusCode = 404;
 		throw error;
 	}
@@ -246,7 +232,13 @@ const getTrackedItems = async (projectId) => {
 		error.statusCode = 404;
 		throw error;
 	}
-	let trackedItems = await TrackedItem.find({ project_ref: project._id }).select({name:1,description:1,item_id:1,location:1,_id:0},)
+	let trackedItems = await TrackedItem.find({ project_ref: project._id }).select({
+		name: 1,
+		description: 1,
+		item_id: 1,
+		location: 1,
+		_id: 0,
+	});
 
 	if (trackedItems === null || trackedItems.length === 0) {
 		const error = new Error("There are no tracked Items.");

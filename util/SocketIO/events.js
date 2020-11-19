@@ -9,10 +9,10 @@ const io = new socketIo();
  * @param {Number} y
  * @param {Number} z
  */
-const entityLocationChanged = (projectId, id, x, y, z) => {
-	io.to(projectId).emit(id, { location: { x, y, z } });
+const emitEntityNewLocation = (projectId, id, x, y, z) => {
+	io.to(projectId).emit(`entity-new-location-${id}`, { location: { x, y, z } });
 };
 
 module.export = {
-	entityLocationChanged,
+	emitEntityNewLocation,
 };
