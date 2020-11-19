@@ -24,6 +24,9 @@ class Singleton {
 		}
 	}
 	getInstance() {
+		if (Singleton.instance) {
+			return Singleton.instance.io;
+		}
 		return Singleton.instance;
 	}
 }

@@ -1,5 +1,4 @@
 const socketIo = require("./socketIo");
-const io = new socketIo();
 
 /**
  * Emits to all the subscribed Clients to the projectId the new Location of the entity identified with id
@@ -9,10 +8,15 @@ const io = new socketIo();
  * @param {Number} y
  * @param {Number} z
  */
+
 const emitEntityNewLocation = (projectId, id, x, y, z) => {
+	const io = new socketIo().getInstance();
 	io.to(projectId).emit(`entity-new-location-${id}`, { location: { x, y, z } });
+	console.log("emited new Location !!");
+	console.log(x, y, z);
+	return;
 };
 
-module.export = {
+module.exports = {
 	emitEntityNewLocation,
 };
