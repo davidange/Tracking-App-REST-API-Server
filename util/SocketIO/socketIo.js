@@ -6,9 +6,12 @@ class Io {
 		//set up connection to the project Room
 		this.server.on("connection", (socket) => {
 			console.log("Someone is trying to connect....");
-			socket.on("join", ({ projectId }) => {
+			socket.on("join", (projectId) => {
 				socket.join(projectId);
-				console.log("Client is connected to Project Room");
+				//console.log("Client is connected to Project Room", projectId);
+			});
+			socket.on("disconnect", () => {
+				//console.log("Client is disconected!");
 			});
 		});
 	}
