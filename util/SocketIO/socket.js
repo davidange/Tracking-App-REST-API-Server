@@ -17,8 +17,6 @@ class Singleton {
 		}
 	}
 	getInstance() {
-		console.log("--------------");
-		console.log(Singleton.instance);
 		if (Singleton.instance) {
 			return Singleton.instance.socketInstance;
 		}
