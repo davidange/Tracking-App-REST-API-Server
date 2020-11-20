@@ -8,7 +8,6 @@ const userRouter = require("./routes/userRoutes");
 const projectRouter = require("./routes/projectRoutes");
 const beaconsRouter = require("./routes/beaconsRoutes");
 const trackedEntitiesRouter = require("./routes/tracked-entitesRoutes");
-const socketIo = require("./util/SocketIO/socketIo");
 
 const corsMiddleware = require("./middlewares/CORS/cors");
 //-------------------------------------------------------------
@@ -16,6 +15,9 @@ dotenv.config();
 // creates & updates Token for Bimplus API
 require("./config/bimPlusTokenGenerator")(app);
 
+//sets up the socket.io-client
+const socketIo = require("./util/SocketIO/socket");
+const socket= new socketIo();
 //-------------------------------------------------------------
 //connect to DB
 mongoose.connect(
@@ -59,8 +61,3 @@ app.use((error, req, res, next) => {
 const server= app.listen(port, () => {
 	console.log("Server Up and running at Port :" + port);
 });
-
-//-------------------------------------------------------------
-//sets up the Socket Io on the Server
-const io = new socketIo(server);
-
