@@ -1,9 +1,8 @@
 const socketio = require("socket.io");
 
 class Io {
-	constructor(app) {
-		this.server = socketio(app.listen());
-
+	constructor(server) {
+		this.server = socketio().listen(server);
 		//set up connection to the project Room
 		this.server.on("connection", (socket) => {
 			console.log("Someone is trying to connect....");
@@ -18,9 +17,9 @@ class Io {
 	}
 }
 class Singleton {
-	constructor(app) {
-		if (app && !Singleton.instance) {
-			Singleton.instance = new Io(app);
+	constructor(server) {
+		if (server && !Singleton.instance) {
+			Singleton.instance = new Io(server);
 		}
 	}
 	getInstance() {

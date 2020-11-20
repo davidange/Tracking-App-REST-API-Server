@@ -15,9 +15,6 @@ const corsMiddleware = require("./middlewares/CORS/cors");
 dotenv.config();
 // creates & updates Token for Bimplus API
 require("./config/bimPlusTokenGenerator")(app);
-//sets up the SocketIO Singleton
-const io = new socketIo(app);
-
 
 //-------------------------------------------------------------
 //connect to DB
@@ -59,6 +56,11 @@ app.use((error, req, res, next) => {
 });
 //-------------------------------------------------------------
 //start application
-app.listen(port, () => {
+const server= app.listen(port, () => {
 	console.log("Server Up and running at Port :" + port);
 });
+
+//-------------------------------------------------------------
+//sets up the Socket Io on the Server
+const io = new socketIo(server);
+
