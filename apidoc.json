@@ -3,5 +3,13 @@
     "version": "0.1.0",
     "description": "API documentation for the Bimplus Beacon Tracking Application",
     "title": "BimPlus Beacon Tracking API",
-    "url":"https://tracking-bimplus-beacon.herokuapp.com"
+    "url":"https://tracking-bimplus-beacon.herokuapp.com",
+    "header":{
+      "title":"About",
+      "filename":"documentation-setup/header.md"
+    },
+    "footer":{
+      "title":"Sockets",
+      "filename":"documentation-setup/sockets.md"
+    }
   }
