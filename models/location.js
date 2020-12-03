@@ -1,6 +1,9 @@
 
 const mongoose = require("mongoose");
 
+/**
+ * Document Schema for location.
+ */
 const locationSchema = new mongoose.Schema({
 	_id: false,
     x:{type:Number,required: true},

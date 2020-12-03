@@ -35,8 +35,6 @@ const estimateLocation = async (projectId, data, locationMethod) => {
 			})
 		);
 
-		//TODO ADD TRY CATCH HERE!!!!!!!!
-		//if it fails, add status code and maybe ask user to use GPS Location now....
 		let estimatedLocation;
 		try {
 			estimatedLocation = await trilaterationServices.weightedTrilateration(

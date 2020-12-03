@@ -1,4 +1,7 @@
 const { check, validationResult } = require("express-validator");
+/** 
+ * Middlewares for validating user related requests.
+*/
 
  const registerValidationUser = [
 	check("name")

@@ -55,7 +55,6 @@ const getModels = async (req, res) => {
 	const bimPlusAuthToken = req.app.get("BimPlusToken")["access_token"]; // already verified that exists through middleware
 	const projectId = req.params.project_id;
 
-	//TODO Add Middleware Validator
 	try {
 		const models = await projectServices.getModels(projectId);
 		return res.status(200).send({

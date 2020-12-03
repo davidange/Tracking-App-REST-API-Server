@@ -1,6 +1,11 @@
 const bimPlusServices = require("./bim-plus-services");
 const Project = require("../models/project");
 
+/** 
+ * Get all the beacons from a project
+ * @params {String} projectId 
+ * @returns {JSON} list of beacons
+*/
 const getBeacons = async (projectId) => {
 	const beacons = await Project.findById(projectId, {
 		"beacons_model.beacons": 1,
@@ -24,6 +29,11 @@ const getBeacons = async (projectId) => {
 	return beacons.beacons_model.beacons;
 };
 
+/** 
+ * Get all the active beacons from a project. An active Beacon is a beacon that has its UID set.
+ * @params {String} projectId 
+ * @returns {JSON} list of active beacons
+*/
 const getActiveBeacons = async (projectId) => {
 	//change logic so thai it only runs getBeaconsFunction(...)(for pagination)
 	const beacons = await getBeacons(projectId);
@@ -31,6 +41,12 @@ const getActiveBeacons = async (projectId) => {
 	return activeBeacons;
 };
 
+/** 
+ * Get information about specific Beacon
+ * @params {String} projectId 
+ * @params {String} beaconId 
+ * @returns {JSON} list of active beacons
+*/
 const getBeacon = async (projectId, beaconId) => {
 	const project = await Project.findById(projectId, {
 		"beacons_model.beacons": 1,
@@ -49,6 +65,11 @@ const getBeacon = async (projectId, beaconId) => {
 	return beacon;
 };
 
+/**
+ * Gets location of desired beacons
+ * @params {String} projectId 
+ * @params {[String]} beaconsUID 
+ */
 const getBeaconsLocation = async (projectId, beaconsUid) => {
 	const project = await Project.findById(projectId, {
 		"beacons_model.beacons": 1,
@@ -75,6 +96,12 @@ const getBeaconsLocation = async (projectId, beaconsUid) => {
 	return locations;
 };
 
+/**
+ * Sets the UID of a beacon
+ * @params {String} projectId 
+ * @params {String} beaconId 
+ * @params {String} beaconUID 
+ */
 const setBeaconUID = async (projectId, beaconId, beaconUID) => {
 	const project = await Project.findById(projectId, {
 		"beacons_model.beacons": 1,
@@ -119,6 +146,11 @@ const setBeaconUID = async (projectId, beaconId, beaconUID) => {
 	return beacon;
 };
 
+/**
+ * Removes the UID of a beacon
+ * @params {String} projectId 
+ * @params {String} beaconId 
+ */
 const deleteBeaconUID = async (projectId, beaconId) => {
 	const project = await Project.findById(projectId, {
 		"beacons_model.beacons": 1,

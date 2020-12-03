@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
 const TrackedEntity = require("./tracked-entity");
-const User = require("../user");
 
+/**
+ * Document Schema representing the location of a User
+ */
 const TrackedUser = TrackedEntity.discriminator(
 	"TrackedUser",
 	new mongoose.Schema({

@@ -1,6 +1,6 @@
 const socketio = require("socket.io-client");
-//singleton for socket object
-
+/**Singleton representing the socket object connected to the socket web server.
+*/
 class Socket {
 	constructor(endpoint) {
 		this.socket = socketio(endpoint, { transports: ["websocket", "polling", "flashsocket"] });

@@ -1,4 +1,8 @@
 const { check, validationResult, oneOf } = require("express-validator");
+/**
+ * This file contains middlewares for validating the HTTP requests related to tracked entities and 
+ * a middleware for returning a response if the request body was invalid.
+ */
 
 const putTrackedEntityValidation = [
 	check("project_id")
@@ -100,6 +104,7 @@ const getTrackedItemValidation = [
 
 const getTrackedItemsValidation = getTrackedUsersValidation;
 
+//Middleware for returning errors if validation did not succeed.
 const validator = (req, res, next) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty())

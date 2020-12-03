@@ -1,5 +1,8 @@
 const jwt = require("jsonwebtoken");
 
+/**
+ * Middleware for authenticating the token passed in HTTP request.
+ */
 module.exports = (req, res, next) => {
 	const authHeader = req.get("Authorization");
 	//if no token header
@@ -28,7 +31,7 @@ module.exports = (req, res, next) => {
 		error.statusCode = 401;
 		throw error;
 	}
-	//if authenticated saved inside Request so that it canbe accessed in other middlewares
+	//if authenticated saved inside Request so that it can be accessed in other middlewares
 	req.userId = decodedToken._id;
 	next();
 };

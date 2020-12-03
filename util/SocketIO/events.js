@@ -1,4 +1,7 @@
 const socketIO = require("./socket");
+/**
+ * This file contains all the events that the socket can emit.
+ */
 
 /**
  * Emits to all the subscribed Clients to the projectId the new Location of the entity identified with id

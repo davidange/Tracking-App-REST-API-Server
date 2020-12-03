@@ -2,6 +2,9 @@ const mongoose = require("mongoose");
 const Model = require("./model/model");
 const BeaconsModel = require("./model/beacons-model");
 
+/**
+ * Document Schema for a project
+ */
 const projectSchema = new mongoose.Schema({
 	_id: String,
 	slug: {

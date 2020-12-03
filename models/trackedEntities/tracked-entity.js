@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 const Location = require("../location");
-
+/**
+ * Base document Schema for all tracked Entities. Tracked items and tracked users
+ * Schemas are inherit from this schema. 
+ */
 const baseOptions = { discriminatorKey: "entityType" };
 
 const trackedEntitySchema = new mongoose.Schema(

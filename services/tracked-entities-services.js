@@ -224,6 +224,8 @@ const getTrackedItem = async (itemId, projectId) => {
 
 /**
  * get the list of all the tracked Users for selected Project
+ * @param {String} projectId
+ * @returns list of trackedItems
  */
 const getTrackedItems = async (projectId) => {
 	const project = await Project.findById(projectId);

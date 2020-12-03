@@ -11,6 +11,10 @@ const trackedEntitiesRouter = require("./routes/tracked-entitesRoutes");
 
 const corsMiddleware = require("./middlewares/CORS/cors");
 //-------------------------------------------------------------
+/**configures the environment variables based on the .env file (for local running only...)
+	if server is run on online service (as heroku), then user must configure the approiate environment variables 
+	on that service (all variables that are stored in process env ...) 	
+*/
 dotenv.config();
 // creates & updates Token for Bimplus API
 require("./config/bimPlusTokenGenerator")(app);
@@ -48,7 +52,7 @@ app.use("/projects/", beaconsRouter);
 //Tracking Entities Router
 app.use("/projects/", trackedEntitiesRouter);
 
-//Error Middleware
+//Error Middleware handler
 app.use((error, req, res, next) => {
 	console.log(error);
 	const status = error.statusCode || 500;
