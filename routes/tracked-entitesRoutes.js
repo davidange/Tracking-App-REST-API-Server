@@ -26,7 +26,7 @@ let wrapper = (fn) => (...args) => fn(...args).catch(args[2]);
  * @apiParam {String="beacon-trilateration","gps-location"} location_method Method that will be used to calculate the user's location
  * 
  * @apiParam (Beacon Trilateration Parameter) {json[]} measurement_data List of Measurements taken for the localization
- * @apiParam (Beacon Trilateration Parameter) {Number} measurement_data.distance distance from Beacon. (in Milimeters)
+ * @apiParam (Beacon Trilateration Parameter) {Number||[Number]} measurement_data.distance distance from Beacon or Array of distances from beacon (in Milimeters)
  * @apiParam (Beacon Trilateration Parameter) {String} measurement_data.beacon_uid uid from Beacon that distance was taken from.
  * 
  * @apiParam (GPS Parameter) {json} measurement_data JSON object with data (STILL NOT IMPLEMENTED)
@@ -36,7 +36,7 @@ let wrapper = (fn) => (...args) => fn(...args).catch(args[2]);
  * 	location_method:"beacon-trilateration"
  * 	measurement_data:[
  * 			{ distance: 1, beacon_uid: "hereGoesBeaconUid" },
- *			{ distance: 2, beacon_uid: "hereGoesBeaconUid" },
+ *			{ distance: [1,2,3], beacon_uid: "hereGoesBeaconUid" },
  *			{ distance: 3, beacon_uid: "hereGoesBeaconUid"},
  *      ]
  * }
@@ -169,7 +169,7 @@ router.get(
  * 
  * 
  * @apiParam (Beacon Trilateration Parameter) {json[]} measurement_data List of Measurements taken for the localization
- * @apiParam (Beacon Trilateration Parameter) {Number} measurement_data.distance distance from Beacon. (in Milimeters)
+ * @apiParam (Beacon Trilateration Parameter) {Number||[Number]} measurement_data.distance distance from Beacon or Array of distances from beacon (in Milimeters)
  * @apiParam (Beacon Trilateration Parameter) {String} measurement_data.beacon_uid uid from Beacon that distance was taken from.
  * 
  * @apiParam (GPS Parameter) {json} measurement_data JSON object with data (STILL NOT IMPLEMENTED)
@@ -182,7 +182,7 @@ router.get(
  * 	location_method:"beacon-trilateration"
  * 	measurement_data:[
  * 			{ distance: 1, beacon_uid: "hereGoesBeaconUid" },
- *			{ distance: 2, beacon_uid: "hereGoesBeaconUid" },
+ *			{ distance: [1,2,3], beacon_uid: "hereGoesBeaconUid" },
  *			{ distance: 3, beacon_uid: "hereGoesBeaconUid"},
  *      ]
  * }
