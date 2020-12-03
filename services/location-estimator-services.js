@@ -33,7 +33,6 @@ const estimateLocation = async (projectId, data, locationMethod) => {
 			//if distances[i] is a single measurement
 			return distanceMeasurement;
 		});
-		console.log(distances);
 
 		const locationBeacons = await beaconInfoServices.getBeaconsLocation(projectId, beaconsUids);
 

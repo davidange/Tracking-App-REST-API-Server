@@ -4,7 +4,6 @@ const socketio = require("socket.io-client");
 class Socket {
 	constructor(endpoint) {
 		this.socket = socketio(endpoint, { transports: ["websocket", "polling", "flashsocket"] });
-		console.log(this.socket);
 	}
 	get socketInstance() {
 		return this.socket;
