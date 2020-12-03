@@ -14,17 +14,28 @@ const beaconInfoServices = require("./beacons-info-services");
  */
 const estimateLocation = async (projectId, data, locationMethod) => {
 	if ("beacon-trilateration" == locationMethod) {
-		const beaconsUids = data.map(
-			(beaconMeasurement) => beaconMeasurement.beacon_uid
-		);
-		const distances = data.map(
-			(beaconMeasurement) => beaconMeasurement.distance
-		);
+		//extract measurement data from data
+		const beaconsUids = data.map((beaconMeasurement) => beaconMeasurement.beacon_uid);
+		let distances = data.map((beaconMeasurement) => beaconMeasurement.distance);
 
-		const locationBeacons = await beaconInfoServices.getBeaconsLocation(
-			projectId,
-			beaconsUids
-		);
+		//get Single distance measurement per beacon
+		distances = distances.map((distanceMeasurement) => {
+			//if distances[i] is an array of distance measurement of beacon, return the median
+			if (Array.isArray(distanceMeasurement)) {
+				const mid = Math.floor(distanceMeasurement.length / 2);
+				//sort from smallest to biggest measurements
+				distanceMeasurement.sort((a, b) => a - b);
+				//return median value of measurements
+				return distanceMeasurement.length % 2 !== 0
+					? distanceMeasurement[mid]
+					: (distanceMeasurement[mid - 1] + distanceMeasurement[mid]) / 2;
+			}
+			//if distances[i] is a single measurement
+			return distanceMeasurement;
+		});
+		console.log(distances);
+
+		const locationBeacons = await beaconInfoServices.getBeaconsLocation(projectId, beaconsUids);
 
 		const beaconsMeasurements = [];
 		locationBeacons.forEach((locationBeacon, i) =>
@@ -37,9 +48,7 @@ const estimateLocation = async (projectId, data, locationMethod) => {
 
 		let estimatedLocation;
 		try {
-			estimatedLocation = await trilaterationServices.weightedTrilateration(
-				beaconsMeasurements
-			);
+			estimatedLocation = await trilaterationServices.weightedTrilateration(beaconsMeasurements);
 		} catch (err) {
 			const error = new Error("Trilateration Failed");
 			error.statusCode = 420;

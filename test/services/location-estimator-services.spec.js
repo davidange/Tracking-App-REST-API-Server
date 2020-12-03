@@ -78,6 +78,12 @@ describe("Services: Location Estimator Services", () => {
 			{ distance: 2, beacon_uid: beaconsUid[2] },
 		];
 
+		const beaconTrackingData_multipleDistanceMeasurements = [
+			{ distance: [1,5,3,2,2], beacon_uid: beaconsUid[0] },
+			{ distance: [1,5,3,2], beacon_uid: beaconsUid[1] },
+			{ distance: 2, beacon_uid: beaconsUid[2] },
+		];
+
 		it("should thow if an invalid method for estimating location is selected", async () => {
 			await expect(
 				locationEstimatorServices.estimateLocation(
@@ -106,6 +112,30 @@ describe("Services: Location Estimator Services", () => {
 			const estimatedLocation = await locationEstimatorServices.estimateLocation(
 				projectId,
 				beaconTrackingData,
+				"beacon-trilateration"
+			);
+			expect(estimatedLocation).to.have.property("x", 0);
+			expect(estimatedLocation).to.have.property("y", 1);
+			expect(estimatedLocation).to.have.property("z", 0);
+			mock.restore();
+			mock.verify();
+		});
+
+		it("should return a Location for the beacon-trilateration method when the input has multiple distance measurements per Beacon", async () => {
+			const mock = sinon.mock(trilaterationServices);
+			mock
+				.expects("weightedTrilateration")
+				.once()
+				.withArgs([
+					{ radius: 2, x: 0, y: 1 },
+					{ radius: 2.5, x: 0, y: 2 },
+					{ radius: 2, x: 1, y: 3 },
+				])
+				.returns({ x: 0, y: 0});
+
+			const estimatedLocation = await locationEstimatorServices.estimateLocation(
+				projectId,
+				beaconTrackingData_multipleDistanceMeasurements,
 				"beacon-trilateration"
 			);
 			expect(estimatedLocation).to.have.property("x", 0);
