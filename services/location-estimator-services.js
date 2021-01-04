@@ -13,7 +13,7 @@ const beaconInfoServices = require("./beacons-info-services");
  * @param {String} locationMethod
  */
 const estimateLocation = async (projectId, data, locationMethod) => {
-	if ("beacon-trilateration" == locationMethod || "beacon-trilateration-2"== locationMethod) {
+	if ("beacon-trilateration" == locationMethod || "beacon-trilateration-2" == locationMethod) {
 		//extract measurement data from data
 		const beaconsUids = data.map((beaconMeasurement) => beaconMeasurement.beacon_uid);
 		let distances = data.map((beaconMeasurement) => beaconMeasurement.distance);
@@ -45,19 +45,32 @@ const estimateLocation = async (projectId, data, locationMethod) => {
 			})
 		);
 
-		console.log('server is Calculating trilateration with ',JSON.stringify(beaconsMeasurements));
+		console.log("server is Calculating trilateration with ", JSON.stringify(beaconsMeasurements));
 
 		let estimatedLocation;
-		try {
-			if("beacon-trilateration" == locationMethod){
+
+		if ("beacon-trilateration" == locationMethod) {
+			try {
 				estimatedLocation = await trilaterationServices.weightedTrilateration(beaconsMeasurements);
-			}else{
-				estimatedLocation = await trilaterationServices.weightedTrilaterationCenterOfMass(beaconsMeasurements);
+			} catch (err) {
+				console.log("Base Trilateration method failed... Trying Weighted Trilateration/CenterOfMass");
+				try {
+					estimatedLocation = await trilaterationServices.weightedTrilaterationCenterOfMass(beaconsMeasurements);
+				} catch (err2) {
+					const error = new Error("Trilateration Failed");
+					error.statusCode = 420;
+					throw error;
+				}
 			}
-		} catch (err) {
-			const error = new Error("Trilateration Failed");
-			error.statusCode = 420;
-			throw error;
+		} else {
+			//Weighted Trilateration center of mass
+			try {
+				estimatedLocation = await trilaterationServices.weightedTrilaterationCenterOfMass(beaconsMeasurements);
+			} catch (err) {
+				const error = new Error("Trilateration Failed");
+				error.statusCode = 420;
+				throw error;
+			}
 		}
 		//NOTE: BIMPLUS COORDINATE SYSTEM HAS THE Y AXIS POINTING UP!!!!!!!!!
 		estimatedLocation.z = estimatedLocation.y;

@@ -53,7 +53,6 @@ describe("Services: Weighted Trilateration", () => {
 				{ radius: 10, x: 5, y: 5 },
 			];
 			const location = weigthedMultilateration.weightedTrilateration(listMeasuerements);
-			console.log(location);
 			expect(location).to.have.property("x").closeTo(3.8064883250588, 0.00001);
 			expect(location).to.have.property("y").closeTo(-1.2290839655, 0.00001);
 		});
@@ -66,9 +65,53 @@ describe("Services: Weighted Trilateration", () => {
 				{ radius: 10, x: 5, y: 5 },
 			];
 			const location = weigthedMultilateration.weightedTrilateration(listMeasuerements);
-			console.log(location);
 			expect(location).to.have.property("x").closeTo(3.1765498458533, 0.00001);
 			expect(location).to.have.property("y").closeTo(4.63235624357, 0.00001);
+		});
+	});
+
+	describe("weightedTrilaterationCenterOfMass(...)", () => {
+		it("should calculate the correct value [Test 1]", () => {
+			const listMeasuerements = [
+				{ radius: 1, x: 0, y: 0 },
+				{ radius: 1, x: 1, y: 1 },
+				{ radius: 1, x: -1, y: -1 },
+				{ radius: 5, x: 5, y: 5 },
+			];
+			const location = weigthedMultilateration.weightedTrilaterationCenterOfMass(listMeasuerements);
+
+			expect(location).to.have.property("x").closeTo(0.0,0.00001);
+			expect(location).to.have.property("y").closeTo(0.0,0.00001);
+		});
+	});
+
+
+	describe("weightedTrilaterationCenterOfMass(...)", () => {
+		it("should calculate the correct value [Test 2]", () => {
+			const listMeasuerements = [
+				{ radius: 1, x: 0, y: 0 },
+				{ radius: 2, x: 1, y: 1 },
+				{ radius: 3, x: -1, y: -1 },
+				{ radius: 5, x: 5, y: 5 },
+			];
+			const location = weigthedMultilateration.weightedTrilaterationCenterOfMass(listMeasuerements);
+
+			expect(location).to.have.property("x").closeTo(0.0909090909,0.00001);
+			expect(location).to.have.property("y").closeTo(0.0909090909 ,0.00001);
+		});
+	});
+
+	describe("weightedTrilaterationCenterOfMass(...)", () => {
+		it("should calculate the correct value [Test 3]", () => {
+			const listMeasuerements = [
+				{ radius: 1, x: 0, y: 0 },
+				{ radius: 8, x: 7, y: 7},
+				{ radius: 3, x: -1, y: -1 },
+			];
+			const location = weigthedMultilateration.weightedTrilaterationCenterOfMass(listMeasuerements);
+
+			expect(location).to.have.property("x").closeTo(0.371428571,0.00001);
+			expect(location).to.have.property("y").closeTo(0.371428571 ,0.00001);
 		});
 	});
 });

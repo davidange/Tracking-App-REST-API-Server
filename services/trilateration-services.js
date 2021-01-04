@@ -161,7 +161,7 @@ const weightedTrilateration = (listOfMeasurements) => {
  * each item of the list is the distance measured to the beacon and its components
  * Note: It is implemented as a 2D trilateration (hence, component z is disregarded to simplify implementation)
  *
- * Implementation proposed by us. Use weighted barycenter for calculating the location of the item
+ * Implementation proposed by us. Use weighted barycenter for calculating the location of the item. (Center Of Mass formulation)
  * @param {[JSON]} listOfMeasurements
  */
 const weightedTrilaterationCenterOfMass = (listOfMeasurements) => {
@@ -182,21 +182,26 @@ const weightedTrilaterationCenterOfMass = (listOfMeasurements) => {
 	const totalRadius = sortedListOfMeasurements.reduce((previousValue, measurement) => {
 		return previousValue + measurement.radius;
 	}, 0);
+
 	const weights = sortedListOfMeasurements.map((measurement) => {
 		return totalRadius / measurement.radius;
 	}, []);
-
+	
 	//calculate the point utilizing the center of mass formula
+	const totalWeight=weights.reduce((total,weight)=>{return total+weight},0);
 	let locationPoint = point(
 		//x Coordinate
-		sortedListOfMeasurements.reduce((totalX, measurement) => {
-			return measurement.x + totalX;
-		}, 0) / weights,
+		sortedListOfMeasurements.reduce((totalX, measurement,index) => {
+			return measurement.x*weights[index] + totalX;
+		}, 0)/totalWeight,
 		//y coordinate
-		sortedListOfMeasurements.reduce((totalY, measurement) => {
-			return measurement.y + totalY;
-		}, 0) / weights
+		sortedListOfMeasurements.reduce((totalY, measurement,index) => {
+			return measurement.y*weights[index] + totalY;
+		}, 0)/totalWeight
 	);
+
+
+	//transform object to json and return only coordinates of data
 	locationPoint = locationPoint.toJSON();
 	delete locationPoint.name;
 	return locationPoint;
