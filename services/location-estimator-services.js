@@ -13,7 +13,7 @@ const beaconInfoServices = require("./beacons-info-services");
  * @param {String} locationMethod
  */
 const estimateLocation = async (projectId, data, locationMethod) => {
-	if ("beacon-trilateration" == locationMethod) {
+	if ("beacon-trilateration" == locationMethod || "beacon-trilateration-2"== locationMethod) {
 		//extract measurement data from data
 		const beaconsUids = data.map((beaconMeasurement) => beaconMeasurement.beacon_uid);
 		let distances = data.map((beaconMeasurement) => beaconMeasurement.distance);
@@ -45,9 +45,15 @@ const estimateLocation = async (projectId, data, locationMethod) => {
 			})
 		);
 
+		console.log('server is Calculating trilateration with ',JSON.stringify(beaconsMeasurements));
+
 		let estimatedLocation;
 		try {
-			estimatedLocation = await trilaterationServices.weightedTrilateration(beaconsMeasurements);
+			if("beacon-trilateration" == locationMethod){
+				estimatedLocation = await trilaterationServices.weightedTrilateration(beaconsMeasurements);
+			}else{
+				estimatedLocation = await trilaterationServices.weightedTrilaterationCenterOfMass(beaconsMeasurements);
+			}
 		} catch (err) {
 			const error = new Error("Trilateration Failed");
 			error.statusCode = 420;

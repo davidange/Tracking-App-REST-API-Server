@@ -111,6 +111,7 @@ const weightedTrilateration = (listOfMeasurements) => {
 
 		locationPoint = scaledLine.end;
 	} else if (numOfIntersections === 4) {
+		//circles intersect in Pairs (Example, Circle A intersects with B and C but C and B do not intersect.)
 	} else if (numOfIntersections === 2) {
 		//Two circles intersect
 		// flattens list of Distances and finds the shortests Segment
@@ -155,4 +156,53 @@ const weightedTrilateration = (listOfMeasurements) => {
 	return locationPoint;
 };
 
-module.exports = { weightedTrilateration };
+/**
+ * Calculates the location based on a list of measurements where
+ * each item of the list is the distance measured to the beacon and its components
+ * Note: It is implemented as a 2D trilateration (hence, component z is disregarded to simplify implementation)
+ *
+ * Implementation proposed by us. Use weighted barycenter for calculating the location of the item
+ * @param {[JSON]} listOfMeasurements
+ */
+const weightedTrilaterationCenterOfMass = (listOfMeasurements) => {
+	if (listOfMeasurements.length < 3) {
+		throw new Error("Number of measurements too low.");
+	}
+	//sort by closest and get only 3 closest measuements
+	sortedListOfMeasurements = listOfMeasurements.sort((a, b) => (a.radius > b.radius ? 1 : -1)).slice(0, 3);
+	if (listOfMeasurements[0].radius <= 0) {
+		throw new Error("Negative measurements are not possible");
+	}
+	//create list of circles that represents the measurements
+	listOfCircles = sortedListOfMeasurements.map((measurement) =>
+		circle(point(measurement.x, measurement.y), measurement.radius)
+	);
+
+	//calculate weights
+	const totalRadius = sortedListOfMeasurements.reduce((previousValue, measurement) => {
+		return previousValue + measurement.radius;
+	}, 0);
+	const weights = sortedListOfMeasurements.map((measurement) => {
+		return totalRadius / measurement.radius;
+	}, []);
+
+	//calculate the point utilizing the center of mass formula
+	let locationPoint = point(
+		//x Coordinate
+		sortedListOfMeasurements.reduce((totalX, measurement) => {
+			return measurement.x + totalX;
+		}, 0) / weights,
+		//y coordinate
+		sortedListOfMeasurements.reduce((totalY, measurement) => {
+			return measurement.y + totalY;
+		}, 0) / weights
+	);
+	locationPoint = locationPoint.toJSON();
+	delete locationPoint.name;
+	return locationPoint;
+};
+
+module.exports = {
+	weightedTrilateration,
+	weightedTrilaterationCenterOfMass
+};

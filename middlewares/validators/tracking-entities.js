@@ -13,7 +13,7 @@ const putTrackedEntityValidation = [
 		.isEmpty()
 		.withMessage("The Method to calculate the location cannot be Empty")
 		.custom((value) => {
-			if (value === "beacon-trilateration" || value === "gps_location") return true;
+			if (value === "beacon-trilateration" || value === "gps_location"||value === "beacon-trilateration-2" ) return true;
 			throw new Error("The Method is not implemented")
 		})
 		.bail(),
