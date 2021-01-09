@@ -30,6 +30,7 @@
     "fetch": "^1.1.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.20",
+    "morgan-body": "^2.6.4",
     "node-fetch": "^2.6.0",
     "socket.io-client": "^3.0.3"
   },

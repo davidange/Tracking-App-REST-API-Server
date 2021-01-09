@@ -8,6 +8,8 @@ const userRouter = require("./routes/userRoutes");
 const projectRouter = require("./routes/projectRoutes");
 const beaconsRouter = require("./routes/beaconsRoutes");
 const trackedEntitiesRouter = require("./routes/tracked-entitesRoutes");
+const morganBody =require('morgan-body');
+
 
 const corsMiddleware = require("./middlewares/CORS/cors");
 //-------------------------------------------------------------
@@ -34,6 +36,9 @@ mongoose.connect(
 //Middlewares
 //to parse incoming requests
 app.use(express.json());
+
+// hook morganBody to express app to print requests
+morganBody(app);
 
 //Middleware for preventing CORS Errors
 app.use(corsMiddleware);
