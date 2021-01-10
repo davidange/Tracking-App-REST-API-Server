@@ -8,8 +8,8 @@ const userRouter = require("./routes/userRoutes");
 const projectRouter = require("./routes/projectRoutes");
 const beaconsRouter = require("./routes/beaconsRoutes");
 const trackedEntitiesRouter = require("./routes/tracked-entitesRoutes");
-const morganBody =require('morgan-body');
-
+const bimplusTokenRouter = require("./routes/bimplusTokenRoutes");
+const morganBody = require("morgan-body");
 
 const corsMiddleware = require("./middlewares/CORS/cors");
 //-------------------------------------------------------------
@@ -23,7 +23,7 @@ require("./config/bimPlusTokenGenerator")(app);
 
 //sets up the socket.io-client
 const socketIo = require("./util/SocketIO/socket");
-const socket= new socketIo();
+const socket = new socketIo();
 //-------------------------------------------------------------
 //connect to DB
 mongoose.connect(
@@ -57,6 +57,9 @@ app.use("/projects/", beaconsRouter);
 //Tracking Entities Router
 app.use("/projects/", trackedEntitiesRouter);
 
+//Bimplus Token Router
+app.use(bimplusTokenRouter);
+
 //Error Middleware handler
 app.use((error, req, res, next) => {
 	console.log(error);
@@ -67,6 +70,6 @@ app.use((error, req, res, next) => {
 });
 //-------------------------------------------------------------
 //start application
-const server= app.listen(port, () => {
+const server = app.listen(port, () => {
 	console.log("Server Up and running at Port :" + port);
 });
